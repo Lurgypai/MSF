@@ -1,2 +1,0 @@
-# MSF
-My Simple Framework
