@@ -3,9 +3,16 @@
 
 #include "Scene.h"
 
-using std::make_shared;
-
 namespace msf {
+
+	using std::make_shared;
+	using std::unordered_map;
+	using std::string;
+	using std::vector;
+	using std::shared_ptr;
+
+	using gobject_vec_map = std::unordered_map<std::string, std::vector<std::shared_ptr<msf::GameObject>>>;
+	using gobject_vec = std::vector<std::shared_ptr<GameObject>>;
 
 	msf::Scene::Scene(void) :
 		objects(),
@@ -50,28 +57,52 @@ namespace msf {
 		return make_shared<gobject_vec>(groups[groupId]);
 	}
 
+	void Scene::removeGroup(const std::string & groupId) {
+		if (std::find(groupIds.begin(), groupIds.end(), groupId) != groupIds.end()) {
+			groups.erase(groupId);
+			for (auto string = groupIds.begin(); string != groupIds.end(); string++) {
+				if (*string == groupId) {
+					groupIds.erase(string);
+				}
+			}
+		}
+	}
+
 	shared_ptr<gobject_vec> msf::Scene::getObjects() {
 		return make_shared<gobject_vec>(objects);
 	}
 
 	void msf::Scene::addObject(GameObject & obj_) {
 		groups[DEFAULT_GROUP_ID].push_back(make_shared<GameObject>(obj_));
+		obj_.setScene(*this);
 	}
 
 	void msf::Scene::addObject(GameObject & obj_, const string & groupId) {
 		groups[groupId].push_back(make_shared<GameObject>(obj_));
 		objects.push_back(make_shared<GameObject>(obj_));
+		obj_.setScene(*this);
+	}
+
+	bool Scene::hasObject(const GameObject & obj_) const {
+		bool predicate{ false };
+		for (auto gobject : objects) {
+			if (*gobject == obj_) {
+				predicate = true;
+				break;
+			}
+		}
+		return predicate;
 	}
 
 	vector<string> msf::Scene::getGroupIds() {
 		return groupIds;
 	}
 
-	void msf::Scene::createGroup(const string & groupId) {
+	void msf::Scene::addGroup(const string & groupId) {
 		groups[groupId] = {};
 	}
 
-	void msf::Scene::createGroup(const string & groupId, std::initializer_list<GameObject> objs_) {
+	void msf::Scene::addGroup(const string & groupId, std::initializer_list<GameObject> objs_) {
 		gobject_vec objs{};
 		for (auto obj : objs_) {
 			objs.push_back(make_shared<GameObject>(obj));
@@ -81,10 +112,14 @@ namespace msf {
 		groupIds.push_back(groupId);
 	}
 
-	void msf::Scene::createGroup(const string & groupId, const gobject_vec & objs_) {
+	void msf::Scene::addGroup(const string & groupId, const std::vector<std::shared_ptr<GameObject>>& objs_) {
 		groups[groupId] = objs_;
 		groupIds.push_back(groupId);
 		objects.insert(objects.end(), objs_.begin(), objs_.end());
+	}
+
+	bool Scene::hasGroup(const std::string & groupId_) const {
+		return std::find(groupIds.begin(), groupIds.end(), groupId_) != groupIds.end();
 	}
 
 	void msf::Scene::operator=(const Scene & scene_) {
@@ -117,4 +152,46 @@ namespace msf {
 		}
 	}
 
+	bool Scene::operator==(const Scene & scene_) const {
+		/* if this doesn't work right, other option here (incomplete):
+		bool predicate{true};
+		//make sure it has the group and object
+		for (string groupId : groupIds) {
+			if (scene_.hasGroup(groupId)) {
+				for (auto gobject : groups[groupId]) {
+					if (scene_.hasObject(*gobject)) {
+
+						//find the string, loop the vectors, compare objects
+						for (string groupId_ : scene_.groupIds) {
+							if (groupId_ == groupId) {
+								for (auto gobject : groups[groupId]) {
+									for (auto gobject_ : groups[groupId_]) {
+										if (*gobject != *gobject_) {
+											predicate = false;
+											break;
+										}
+									}
+								}
+							}
+						}
+					}
+					else {
+						predicate = false;
+						break;
+					}
+				}
+			}
+			else {
+				predicate = false;
+				break;
+			}
+		}
+		*/
+		return (groups == scene_.groups) && (groupIds == scene_.groupIds) && (objects == scene_.objects);
+	}
+
+	bool Scene::operator!=(const Scene& scene_) const {
+
+		return (groups != scene_.groups) || (groupIds != scene_.groupIds) || (objects != scene_.objects);
+	}
 }

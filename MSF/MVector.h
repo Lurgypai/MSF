@@ -14,12 +14,12 @@ struct MVector {
 	double yComp() const;
 
 	//operators
-	MVector&& operator+(const MVector& vec_) const;
-	MVector&& operator-(const MVector& vec_) const;
-	MVector&& operator+(const double& d) const;
-	MVector&& operator-(const double& d) const;
-	MVector&& operator*(const double& d) const;
-	MVector&& operator/(const double& d) const;
+	MVector operator+(const MVector& vec_) const;
+	MVector operator-(const MVector& vec_) const;
+	MVector operator+(const double& d) const;
+	MVector operator-(const double& d) const;
+	MVector operator*(const double& d) const;
+	MVector operator/(const double& d) const;
 
 	void operator+=(const MVector& vec_);
 	void operator-=(const MVector& vec_);
@@ -28,18 +28,18 @@ struct MVector {
 	void operator*=(const double& d);
 	void operator/=(const double& d);
 
-	bool&& operator==(const MVector& vec_);
-	bool&& operator!=(const MVector& vec_);
+	bool operator==(const MVector& vec_) const;
+	bool operator!=(const MVector& vec_) const;
 
 	double angle;
 	double magn;
 };
 
 //operators
-sf::Vector2f&& operator+(const sf::Vector2f& vec_, const MVector& mvec_);
+sf::Vector2f operator+(const sf::Vector2f& vec_, const MVector& mvec_);
 void operator+=(sf::Vector2f& vec_, const MVector& mvec_);
 
 
-sf::Vector2f&& operator-(const sf::Vector2f& vec_, const MVector& mvec_);
+sf::Vector2f operator-(const sf::Vector2f& vec_, const MVector& mvec_);
 void operator-=(sf::Vector2f& vec_, const MVector& mvec_);
 }
