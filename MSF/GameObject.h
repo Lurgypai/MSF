@@ -16,23 +16,23 @@ class GraphicsComponent;
 class InputComponent;
 class AudioComponent;
 
-
+//may not want those to be references (x, y)
 class GameObject {
 public:
-	GameObject(unsigned char componentTag_,
+	GameObject(Scene& scene, unsigned char componentTag_,
 		std::unique_ptr<PhysicsComponent> physics_ = nullptr,
 		std::unique_ptr<GraphicsComponent> graphics_ = nullptr,
 		std::unique_ptr<InputComponent> input_ = nullptr,
 		std::unique_ptr<AudioComponent> audio_ = nullptr);
 
-	GameObject(const sf::Vector2f& pos_,
+	GameObject(Scene& scene, const sf::Vector2f& pos_,
 		unsigned char componentTag_,
 		std::unique_ptr<PhysicsComponent> physics_ = nullptr,
 		std::unique_ptr<GraphicsComponent> graphics_ = nullptr,
 		std::unique_ptr<InputComponent> input_ = nullptr,
 		std::unique_ptr<AudioComponent> audio_ = nullptr);
 
-	GameObject(const double& y_, const double& x_,
+	GameObject(Scene& scene, const double& y_, const double& x_,
 		unsigned char componentTag_,
 		std::unique_ptr<PhysicsComponent> physics_ = nullptr,
 		std::unique_ptr<GraphicsComponent> graphics_ = nullptr,
@@ -44,14 +44,14 @@ public:
 	double y() const;
 	sf::Vector2f getPos() const;
 
-	std::shared_ptr<Scene> getScene(void);
+	Scene& getScene(void);
 	void setScene(Scene& scene_);
 	
 	bool operator==(const GameObject& obj2_) const;
 	bool operator!=(const GameObject& obj2_) const;
 	//add obtaining scene
 	//add vector of components
-	enum ComponentFlags {
+	enum ComponentFlags : char {
 		Physics = 1 << 0,
 		Graphics = 1 << 1,
 		Input = 1 << 2,
@@ -63,7 +63,7 @@ private:
 
 	sf::Vector2f pos;
 	//reference to scene
-	std::shared_ptr<Scene> scene;
+	Scene& scene;
 	unsigned char componentTag;
 
 	//these are owned, no need to reference

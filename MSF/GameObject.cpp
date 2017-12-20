@@ -4,51 +4,56 @@
 #include <iostream>
 namespace msf {
 
-GameObject::GameObject(unsigned char componentTag_,
+GameObject::GameObject(Scene& scene_, unsigned char componentTag_,
 	std::unique_ptr<PhysicsComponent> physics_,
 	std::unique_ptr<GraphicsComponent> graphics_,
 	std::unique_ptr<InputComponent> input_,
 	std::unique_ptr<AudioComponent> audio_) :
-	pos(0.0F, 0.0F), scene(),
+	scene(scene_), pos(0.0F, 0.0F), componentTag{componentTag_},
 
 	physics{std::move(physics_)},
 	graphics{ std::move(graphics_) },
 	input{ std::move(input_) },
 	audio{ std::move(audio_) }
-{}
+{
+	scene.addObject(*this);
+}
 
-GameObject::GameObject(const sf::Vector2f & pos_,
+GameObject::GameObject(Scene& scene_, const sf::Vector2f & pos_,
 	unsigned char componentTag_,
 	std::unique_ptr<PhysicsComponent> physics_,
 	std::unique_ptr<GraphicsComponent> graphics_,
 	std::unique_ptr<InputComponent> input_,
 	std::unique_ptr<AudioComponent> audio_) :
-	pos(pos_), scene(),
+	scene(scene_), pos(pos_), componentTag{ componentTag_ },
 
 	physics{ std::move(physics_) },
 	graphics{ std::move(graphics_) },
 	input{ std::move(input_) },
 	audio{ std::move(audio_) }
-{}
+{
+	scene.addObject(*this);
+}
 
-GameObject::GameObject(const double & y_, const double & x_,
+GameObject::GameObject(Scene& scene_, const double & x_, const double & y_,
 	unsigned char componentTag_,
 	std::unique_ptr<PhysicsComponent> physics_,
 	std::unique_ptr<GraphicsComponent> graphics_,
 	std::unique_ptr<InputComponent> input_,
 	std::unique_ptr<AudioComponent> audio_) :
-	pos(x_, y_), scene(),
+	scene(scene_), pos(x_, y_), componentTag{ componentTag_ },
 
 	physics{ std::move(physics_) },
 	graphics{ std::move(graphics_) },
 	input{ std::move(input_) },
 	audio{ std::move(audio_) }
-{}
+{
+	scene.addObject(*this);
+}
 
-GameObject::GameObject(const GameObject & gobj) {
-	pos = gobj.pos;
-	*scene = *(gobj.scene);
-	componentTag = gobj.componentTag;
+GameObject::GameObject(const GameObject & gobj) : 
+	pos{ gobj.pos }, scene(gobj.scene), componentTag{gobj.componentTag} {
+	scene.addObject(*this);
 	*physics = *(gobj.physics);
 	*graphics = *(gobj.graphics);
 	*input = *(gobj.input);
@@ -60,32 +65,26 @@ GameObject::~GameObject()
 }
 
 void GameObject::update(void) {
-
 	if (componentTag & Physics) {
-		std::cout << "HasPhysics" << std::endl;
 		if (physics != nullptr) {
 			physics->update(*this);
 		}
 	}
 	if (componentTag & Graphics) {
-		std::cout << "gfx" << std::endl;
 		if (graphics != nullptr) {
 			graphics->update(*this);
 		}
 	}
 	if (componentTag & Input) {
-		std::cout << "in" << std::endl;
 		if (input != nullptr) {
 			input->update(*this);
 		}
 	}
 	if (componentTag & Audio) {
-		std::cout << "sfx" << std::endl;
 		if (audio != nullptr) {
 			audio->update(*this);
 		}
 	}
-	std::cout << (componentTag & Physics) << std::endl;
 }
 
 double GameObject::x() const {
@@ -96,16 +95,15 @@ sf::Vector2f GameObject::getPos() const {
 	return pos;
 }
 
-std::shared_ptr<Scene> GameObject::getScene(void) {
+Scene& GameObject::getScene(void) {
 	return scene;
 }
 
 void GameObject::setScene(Scene & scene_) {
-	if (scene != nullptr) {
-		for (auto string : scene->getGroupIds()) {
-			for (auto objectIterator = scene->getGroup(string)->begin(); objectIterator != scene->getGroup(string)->end(); objectIterator++) {
-				if (*this == ** objectIterator) {
-					scene->getGroup(string)->erase(objectIterator);
+		for (auto& string : scene.getGroupIds()) {
+			for (auto& objectIterator = scene.getGroup(string).begin(); objectIterator != scene.getGroup(string).end(); objectIterator++) {
+				if (*this == **objectIterator) {
+					scene.getGroup(string).erase(objectIterator);
 					/* add if you want to remove the group when it is empty
 					if (scene->getGroup(string)->size() == 0) {
 
@@ -114,9 +112,7 @@ void GameObject::setScene(Scene & scene_) {
 				}
 			}
 		}
-	}
-	scene = std::shared_ptr<Scene>(&scene_);
-
+	scene = scene_;
 }
 
 double GameObject::y() const

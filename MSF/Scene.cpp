@@ -12,8 +12,8 @@ namespace msf {
 	using std::vector;
 	using std::shared_ptr;
 
-	using gobject_vec_map = std::unordered_map<std::string, std::vector<std::shared_ptr<GameObject>>>;
-	using gobject_vec = std::vector<std::shared_ptr<GameObject>>;
+	using gobject_vec_map = std::unordered_map<std::string, std::vector<GameObject*>>;
+	using gobject_vec = std::vector<GameObject*>;
 
 	Scene::Scene(void) :
 		objects{},
@@ -24,52 +24,54 @@ namespace msf {
 	Scene::Scene(Scene & scene_) :
 		groupIds(scene_.groupIds), groups{}, objects{} {
 
-		for (auto pair : scene_.groups) {
+		for (auto& pair : scene_.groups) {
 			gobject_vec vec{};
-			for (auto gobject_ptr : pair.second) {
-				vec.push_back(shared_ptr<GameObject> {new GameObject{ *gobject_ptr }});
+			for (auto& gobject : pair.second) {
+				vec.push_back(gobject);
 			}
 			groups.insert(std::pair<string, gobject_vec>(pair.first, vec));
 		}
-
-		for (auto gobject : scene_.objects) {
-			objects.push_back(shared_ptr<GameObject>(new GameObject(*gobject)));
+		//if the source objects and accepter objects are the same, we don't want to clear it, but if we append it will copy whats already there. so make a new one, fill and set the old to it
+		gobject_vec objects_;
+		for (auto& gobject : scene_.objects) {
+			objects_.push_back(gobject);
 		}
+		objects = objects_;
 	}
 
 	Scene::Scene(Scene && scene_) :
 		groupIds(scene_.groupIds), groups{}, objects{} {
 
-		for (auto pair : scene_.groups) {
+		for (auto& pair : scene_.groups) {
 			gobject_vec vec{};
-			for (auto gobject_ptr : pair.second) {
+			for (auto& gobject_ptr : pair.second) {
 				vec.push_back(std::move(gobject_ptr));
 			}
 			groups.insert(std::pair<string, gobject_vec>(pair.first, vec));
 		}
 
-		for (auto gobject : scene_.objects) {
-			objects.push_back(std::move(gobject));
+		gobject_vec objects_;
+		for (auto& gobject : scene_.objects) {
+			objects_.push_back(std::move(gobject));
 		}
+		objects = objects_;
 	}
 
 	void Scene::updateAll() {
-		for (auto& objectptr : objects) {
-			objectptr->update();
-			std::cout << "flag" << std::endl;
+		for (auto& gobject : objects) {
+			gobject->update();
 		}
-		std::cout << "flag" << std::endl;
 	}
 
 	void Scene::update(const std::string& groupId){
-		for (auto& objectptr : groups[groupId]) {
-			objectptr->update();
+		for (auto& gobject : groups[groupId]) {
+			gobject->update();
 		}
 	}
 
-	shared_ptr<gobject_vec> Scene::getGroup(const string & groupId) {
+	gobject_vec& Scene::getGroup(const std::string& groupId) {
 		if (groups.find(groupId) != groups.end())
-		return std::shared_ptr<gobject_vec>(&(groups[groupId]));
+		return (groups[groupId]);
 	}
 
 	void Scene::removeGroup(const std::string & groupId) {
@@ -83,55 +85,37 @@ namespace msf {
 		}
 	}
 
-	shared_ptr<gobject_vec> Scene::getObjects() {
-		return std::shared_ptr<gobject_vec>(&objects);
+	gobject_vec& Scene::getObjects() {
+		return objects;
 	}
 
 	void Scene::addObject(GameObject & obj_) {
 		obj_.setScene(*this);
-		groups[DEFAULT_GROUP_ID].push_back(std::shared_ptr<GameObject>(&obj_));
-		objects.push_back(std::shared_ptr<GameObject>(&obj_));
+		groups[DEFAULT_GROUP_ID].push_back(&obj_);
+		objects.push_back(&obj_);
 	}
 
 	void Scene::addObject(GameObject & obj_, const string & groupId) {
 		obj_.setScene(*this);
-		groups[groupId].push_back(std::shared_ptr<GameObject>(&obj_));
-		objects.push_back(std::shared_ptr<GameObject>(&obj_));
+		groups[groupId].push_back(&obj_);
+		objects.push_back(&obj_);
 	}
 
 	bool Scene::hasObject(const GameObject & obj_) const {
-		bool predicate{ false };
-		for (auto gobject : objects) {
+		for (const auto& gobject : objects) {
 			if (*gobject == obj_) {
-				predicate = true;
-				break;
+				return true;
 			}
 		}
-		return predicate;
+		return false;
 	}
 
-	vector<string> Scene::getGroupIds() {
+	const vector<string>& Scene::getGroupIds() const {
 		return groupIds;
 	}
 
-	void Scene::addGroup(const string & groupId) {
+	void Scene::addGroup(const string groupId) {
 		groups[groupId] = {};
-	}
-
-	void Scene::addGroup(const string & groupId, std::initializer_list<GameObject> objs_) {
-		gobject_vec objs{};
-		for (auto obj : objs_) {
-			objs.push_back(shared_ptr<GameObject>(&obj));
-			objects.push_back(shared_ptr<GameObject>(&obj));
-		}
-		groups[groupId] = objs;
-		groupIds.push_back(groupId);
-	}
-
-	void Scene::addGroup(const string & groupId, const std::vector<std::shared_ptr<GameObject>>& objs_) {
-		groups[groupId] = objs_;
-		groupIds.push_back(groupId);
-		objects.insert(objects.end(), objs_.begin(), objs_.end());
 	}
 
 	bool Scene::hasGroup(const std::string & groupId_) const {
@@ -140,32 +124,36 @@ namespace msf {
 
 	void Scene::operator=(const Scene & scene_) {
 			groupIds = scene_.groupIds;
-			for (auto pair : scene_.groups) {
+			for (auto& pair : scene_.groups) {
 				gobject_vec vec{};
-				for (auto gobject_ptr : pair.second) {
-					vec.push_back(shared_ptr<GameObject> {new GameObject{ *gobject_ptr }});
+				for (auto& gobject : pair.second) {
+					vec.push_back(gobject);
 				}
 				groups.insert(std::pair<string, gobject_vec>(pair.first, vec));
 			}
 
-			for (auto gobject : scene_.objects) {
-				objects.push_back(shared_ptr<GameObject>(new GameObject(*gobject)));
+			gobject_vec objects_;
+			for (auto& gobject : scene_.objects) {
+				objects_.push_back(gobject);
 			}
+			objects = objects_;
 	}
 
 	void Scene::operator=(Scene && scene_) {
 		groupIds = scene_.groupIds;
-		for (auto pair : scene_.groups) {
+		for (auto& pair : scene_.groups) {
 			gobject_vec vec{};
-			for (auto gobject_ptr : pair.second) {
-				vec.push_back(std::move(gobject_ptr));
+			for (auto& gobject : pair.second) {
+				vec.push_back(std::move(gobject));
 			}
 			groups.insert(std::pair<string, gobject_vec>(pair.first, vec));
 		}
 
-		for (auto gobject : scene_.objects) {
-			objects.push_back(std::move(gobject));
+		gobject_vec objects_;
+		for (auto& gobject : scene_.objects) {
+			objects_.push_back(std::move(gobject));
 		}
+		objects = objects_;
 	}
 
 	bool Scene::operator==(const Scene & scene_) const {

@@ -39,12 +39,6 @@
     <ClInclude Include="Scene.h">
       <Filter>Header Files\Base</Filter>
     </ClInclude>
-    <ClInclude Include="Game.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Settings.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="IFileService.h">
       <Filter>Header Files\Base</Filter>
     </ClInclude>
@@ -61,6 +55,12 @@
       <Filter>Header Files\Base\Components</Filter>
     </ClInclude>
     <ClInclude Include="GameObjectManager.h">
+      <Filter>Header Files\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Settings.h">
+      <Filter>Header Files\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Game.h">
       <Filter>Header Files\Base</Filter>
     </ClInclude>
   </ItemGroup>

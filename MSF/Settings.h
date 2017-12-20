@@ -16,8 +16,9 @@ namespace msf {
 
 class Settings {
 public:
-	Settings(std::initializer_list<std::pair<const std::string&, int>> vals);
+	Settings(std::initializer_list<std::pair<const std::string, int>> vals);
 	Settings(std::string loadPath_);
+	Settings(const Settings& settings);
 	Settings();
 	~Settings();
 

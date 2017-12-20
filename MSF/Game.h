@@ -27,16 +27,18 @@ namespace msf {
 class Game {
 public:
 	Game(const std::string& name_);
-	Game(const std::string& name_, std::initializer_list<std::pair<const std::string&, Scene&>> scenes);
-	Game(const std::string& name_, std::initializer_list<std::pair<const std::string&, Scene&>> scenes, const Settings& settings_);
+	Game(const std::string& name_, std::initializer_list<std::pair<const std::string, Scene&>> scenes);
+	Game(const std::string& name_, std::initializer_list<std::pair<const std::string, Scene&>> scenes, const Settings& settings_);
+	Game(const std::string& name_, std::initializer_list<std::pair<const std::string, Scene&&>> scenes) = delete;
+	Game(const std::string& name_, std::initializer_list<std::pair<const std::string, Scene&&>> scenes, const Settings& settings_) = delete;
 	Game(const std::string& name_, const Settings& settings_);
 	~Game();
 
 	void start(const std::string& startScene);
 
-	std::shared_ptr<Scene> getScene(const std::string& id);
-	std::unique_ptr<Settings> getSettings();
-	std::shared_ptr<Scene> getCurrentScene();
+	Scene* getScene(const std::string& id);
+	Settings& getSettings();
+	Scene* getCurrentScene();
 
 	void setSettings(const Settings& set_);
 	void setSettings(const std::initializer_list<std::pair<std::string, int>>);
@@ -47,11 +49,10 @@ public:
 private:
 	const std::string name;
 	//references or raw pointers
-	std::unordered_map<std::string, std::shared_ptr<Scene>> scenes;
-	//no need to be a pointer
-	std::shared_ptr<sf::RenderWindow> window;
+	std::unordered_map<std::string, Scene*> scenes;
+	sf::RenderWindow window;
 	//reference or raw pointer
-	std::shared_ptr<Scene> currentScene;
+	Scene* currentScene;
 	Settings settings;
 	//settings
 	//services

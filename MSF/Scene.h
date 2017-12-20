@@ -20,19 +20,21 @@ public:
 	void updateAll();
 	void update(const std::string& groupId);
 
-	std::shared_ptr<std::vector<std::shared_ptr<GameObject>>> getGroup(const std::string& groupId);
+	std::vector<GameObject*>& getGroup(const std::string& groupId);
 	void removeGroup(const std::string& groupId);
-	std::shared_ptr<std::vector<std::shared_ptr<GameObject>>> getObjects();
+	std::vector<GameObject*>& getObjects();
 
 	void addObject(GameObject& obj_);
 	void addObject(GameObject& obj_, const std::string& groupId);
 	
+	//make sure it can't be a new one as we store a pointer to it (may change later)
+	void addObject(GameObject&& obj_) = delete;
+	void addObject(GameObject&& obj_, const std::string& groupId) = delete;
+
 	bool hasObject(const GameObject& obj_) const;
 
-	std::vector<std::string> getGroupIds();
-	void addGroup(const std::string& groupId);
-	void addGroup(const std::string& groupId, std::initializer_list<GameObject> objs_);
-	void addGroup(const std::string& groupId, const std::vector<std::shared_ptr<GameObject>>& objs_);
+	const std::vector<std::string>& getGroupIds() const;
+	void addGroup(const std::string groupId);
 	bool hasGroup(const std::string& groupId_) const;
 
 	void operator=(const Scene& scene_);
@@ -42,8 +44,8 @@ public:
 	bool operator!=(const Scene& scene_) const;
 protected:
 	//either references or raw pointers then
-	std::unordered_map<std::string, std::vector<std::shared_ptr<GameObject>>> groups;
-	std::vector<std::shared_ptr<GameObject>> objects;
+	std::unordered_map<std::string, std::vector<GameObject*>> groups;
+	std::vector<GameObject*> objects;
 	std::vector<std::string> groupIds;
 };
 

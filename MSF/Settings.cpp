@@ -6,14 +6,20 @@
 #include <iostream>
 
 namespace msf {
-Settings::Settings(std::initializer_list<std::pair<const std::string&, int>> vals)	{
-	for (auto& pair : vals) {
+Settings::Settings(std::initializer_list<std::pair<const std::string, int>> vals)	{
+	for (auto pair : vals) {
 		fields.insert(pair);
 	}
 }
 	Settings::Settings(std::string loadPath_) {
 	load(loadPath_);
 }
+
+	Settings::Settings(const Settings & settings) {
+		for (auto fieldPair : settings.fields) {
+			fields.insert(fieldPair);
+		}
+	}
 
 	Settings::Settings() : fields{} {}
 

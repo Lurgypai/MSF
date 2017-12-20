@@ -1,42 +1,41 @@
 #include "stdafx.h"
 #include "Game.h"
+#include <iostream>
 
 namespace msf {
 
-	Game::Game(const std::string & name_) : name{ name_ }, scenes{}, window{ new sf::RenderWindow{} } {}
+	Game::Game(const std::string & name_) : name{ name_ }, scenes{}, window{} {}
 
-	Game::Game(const std::string& name_, std::initializer_list<std::pair<const std::string&, Scene&>> scenes_) : name{ name_ }, window{ new sf::RenderWindow{} } {
+	Game::Game(const std::string& name_, std::initializer_list<std::pair<const std::string, Scene&>> scenes_) : name{ name_ }, window{} {
+		for (auto& pair_ : scenes_) {
+			scenes.insert({ pair_.first, &(pair_.second) });
+		}
+	}
+
+Game::Game(const std::string & name_, std::initializer_list<std::pair<const std::string, Scene&>> scenes_, const Settings& settings_) : name{ name_ }, settings{settings_}, window{} {
 	for (auto& pair_ : scenes_) {
-		scenes.insert({ pair_.first, std::shared_ptr<Scene>(&(pair_.second)) });
+		scenes.insert({ pair_.first, &(pair_.second) });
 	}
 }
 
-Game::Game(const std::string & name_, std::initializer_list<std::pair<const std::string&, Scene&>> scenes_, const Settings & settings_) : name{ name_ }, settings{settings_}, window{ new sf::RenderWindow{} } {
-	for (auto& pair_ : scenes_) {
-		scenes.insert({ pair_.first, std::shared_ptr<Scene>(&(pair_.second)) });
-	}
-}
-
-Game::Game(const std::string & name_, const Settings & settings_) : name{ name_ }, scenes{}, settings { settings_ }, window{ new sf::RenderWindow } {
-}
+Game::Game(const std::string & name_, const Settings & settings_) : name{ name_ }, scenes{}, settings { settings_ }, window{} {}
 
 Game::~Game() {}
 
 void Game::start(const std::string& startScene) {
 	currentScene = scenes[startScene];
-
 	openWindow();
 }
 
-std::shared_ptr<Scene> Game::getScene(const std::string& id) {
+Scene* Game::getScene(const std::string& id) {
 	return scenes[id];
 }
 
-std::unique_ptr<Settings> Game::getSettings() {
-	return std::unique_ptr<Settings>(&settings);
+Settings& Game::getSettings() {
+	return settings;
 }
 
-std::shared_ptr<Scene> Game::getCurrentScene() {
+Scene* Game::getCurrentScene() {
 	return currentScene;
 }
 
@@ -52,7 +51,7 @@ void Game::setSettings(const std::initializer_list<std::pair<std::string, int>> 
 
 
 void Game::addScene(Scene & scene_, const std::string& id) {
-	scenes.insert({id, std::shared_ptr<Scene>(&scene_)});
+	scenes.insert({id, &scene_});
 }
 
 void Game::setScene(const std::string & id) {
@@ -60,9 +59,9 @@ void Game::setScene(const std::string & id) {
 }
 
 void Game::openWindow() {
-	if (window->isOpen())
-		window->close();
-	window->create(sf::VideoMode(settings.getField("width"), settings.getField("height")), name);\
+	if (window.isOpen())
+		window.close();
+	window.create(sf::VideoMode(settings.getField("width"), settings.getField("height")), name);\
 }
 
 }
