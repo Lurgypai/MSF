@@ -36,13 +36,21 @@ public:
 
 	std::shared_ptr<Scene> getScene(const std::string& id);
 	std::unique_ptr<Settings> getSettings();
+	std::shared_ptr<Scene> getCurrentScene();
+
+	void setSettings(const Settings& set_);
+	void setSettings(const std::initializer_list<std::pair<std::string, int>>);
 	void addScene(Scene& scene_, const std::string& id);
 	void setScene(const std::string& id);
+	
 	void openWindow();
 private:
 	const std::string name;
+	//references or raw pointers
 	std::unordered_map<std::string, std::shared_ptr<Scene>> scenes;
+	//no need to be a pointer
 	std::shared_ptr<sf::RenderWindow> window;
+	//reference or raw pointer
 	std::shared_ptr<Scene> currentScene;
 	Settings settings;
 	//settings

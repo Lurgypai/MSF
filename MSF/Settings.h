@@ -13,6 +13,7 @@
 //read from file
 
 namespace msf {
+
 class Settings {
 public:
 	Settings(std::initializer_list<std::pair<const std::string&, int>> vals);

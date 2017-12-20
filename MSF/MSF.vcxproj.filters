@@ -19,6 +19,9 @@
     <Filter Include="Source Files\Base">
       <UniqueIdentifier>{671f36a1-0b7e-4eec-945d-b3c149d5705f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Base\Components">
+      <UniqueIdentifier>{d77564c9-3643-4416-9113-e3b4abae90cf}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -43,6 +46,21 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="IFileService.h">
+      <Filter>Header Files\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="InputComponent.h">
+      <Filter>Header Files\Base\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsComponent.h">
+      <Filter>Header Files\Base\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="AudioComponent.h">
+      <Filter>Header Files\Base\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysicsComponent.h">
+      <Filter>Header Files\Base\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObjectManager.h">
       <Filter>Header Files\Base</Filter>
     </ClInclude>
   </ItemGroup>

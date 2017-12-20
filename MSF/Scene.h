@@ -17,6 +17,9 @@ public:
 	Scene(Scene& scene_);
 	Scene(Scene&& scene_);
 
+	void updateAll();
+	void update(const std::string& groupId);
+
 	std::shared_ptr<std::vector<std::shared_ptr<GameObject>>> getGroup(const std::string& groupId);
 	void removeGroup(const std::string& groupId);
 	std::shared_ptr<std::vector<std::shared_ptr<GameObject>>> getObjects();
@@ -38,6 +41,7 @@ public:
 	bool operator==(const Scene& scene_) const;
 	bool operator!=(const Scene& scene_) const;
 protected:
+	//either references or raw pointers then
 	std::unordered_map<std::string, std::vector<std::shared_ptr<GameObject>>> groups;
 	std::vector<std::shared_ptr<GameObject>> objects;
 	std::vector<std::string> groupIds;

@@ -159,9 +159,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="AudioComponent.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameObject.h" />
+    <ClInclude Include="GameObjectManager.h" />
+    <ClInclude Include="GraphicsComponent.h" />
     <ClInclude Include="IFileService.h" />
+    <ClInclude Include="InputComponent.h" />
+    <ClInclude Include="PhysicsComponent.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="MVector.h" />
     <ClInclude Include="Settings.h" />
