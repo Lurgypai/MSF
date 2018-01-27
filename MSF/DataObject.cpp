@@ -3,13 +3,13 @@
 
 namespace msf {
 
-	DataObject::DataObject() : input{ nullptr }, tag(tagCounter++) {}
+DataObject::DataObject() : input{ nullptr }, tag(tagCounter++) {}
 
-	msf::DataObject::DataObject(std::unique_ptr<DInputComponent>& in) : input{ in->clone() }, tag{tagCounter++} {}
+DataObject::~DataObject() {}
 
-	void DataObject::update(std::vector<Action>& actions) {
-		input->update(actions);
-	}
+void DataObject::update(std::vector<Action>& actions) {
+	input->update(actions);
+}
 
 bool DataObject::hasInput() {
 	return (input.get() != nullptr);
@@ -19,17 +19,13 @@ Scene * DataObject::getScene() {
 	return scene;
 }
 
-DataObject::~DataObject() {}
-
-//finish
 bool DataObject::operator==(const DataObject & other) {
-	return scene == other.scene;
+	return tag == other.tag;
 }
 
 bool DataObject::operator!=(const DataObject & other) {
-	return !(*this == other);
+	return tag != other.tag;
 }
 
 uint64_t DataObject::tagCounter = 0;
-
 }

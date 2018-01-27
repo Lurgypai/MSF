@@ -13,12 +13,12 @@ class GameObjectFactory {
 public:
 	GameObjectFactory(Scene* scene_);
 	GameObjectFactory(Scene* scene_, const sf::Vector2f pos_);
+	~GameObjectFactory();
 
-	std::vector<std::shared_ptr<GameObject>> generate(int num);
-	std::vector<std::shared_ptr<GameObject>> generate(const std::string& groupId, int num);
-	std::shared_ptr<GameObject> generate();
-	std::shared_ptr<GameObject> generate(const std::string& groupId);
-	const Scene& getScene() const;
+	Scene* getScene();
+	std::shared_ptr<GameObject> generate(const std::string& groupId = Scene::default_groupid);
+	void generate(std::vector<std::shared_ptr<GameObject>>& objs, int num, const std::string& groupid = Scene::default_groupid);
+
 	template<typename T, typename... Args>
 	GameObjectFactory* setPhysics(Args... args) {
 		physics = std::make_unique<T>(args...);
@@ -48,7 +48,6 @@ public:
 	}
 
 private:
-	inline void fillComponents(const std::shared_ptr<GameObject>& gobjectPtr);
 
 	Scene* scene;
 	sf::Vector2f pos;

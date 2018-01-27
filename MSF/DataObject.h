@@ -15,20 +15,17 @@ class DataObject
 public:
 
 	DataObject();
-	DataObject(std::unique_ptr<DInputComponent>& in);
+	~DataObject();
 
 	void update(std::vector<Action>& actions);
-
 	bool hasInput();
+	Scene* getScene();
 
 	template<typename T, typename... Args>
 	void setInput(Args... args) {
 		input = std::make_unique<T>(args...);
 		input->owner = this;
 	}
-
-	Scene* getScene();
-	~DataObject();
 
 	bool operator==(const DataObject& other);
 	bool operator!=(const DataObject& other);

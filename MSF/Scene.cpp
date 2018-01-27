@@ -1,5 +1,4 @@
 #include "stdafx.h"
-#define DEFAULT_GROUP_ID "default"
 
 #include "Scene.h"
 #include <iostream>
@@ -19,11 +18,11 @@ namespace msf {
 	using dobject_vec = std::vector<std::shared_ptr<DataObject>>;
 
 	Scene::Scene(void) :
-		gogroupIds(1, DEFAULT_GROUP_ID),
-		gogroups{ { DEFAULT_GROUP_ID, gobject_vec{} } },
+		gogroupIds(1, default_groupid),
+		gogroups{ { default_groupid, gobject_vec{} } },
 
-		dogroupIds(1, DEFAULT_GROUP_ID),
-		dogroups{ { DEFAULT_GROUP_ID, dobject_vec{} } }
+		dogroupIds(1, default_groupid),
+		dogroups{ { default_groupid, dobject_vec{} } }
 	{}
 
 	Scene::Scene(Scene & scene_) :
@@ -135,8 +134,8 @@ namespace msf {
 
 	std::shared_ptr<DataObject> Scene::addDObject(const string & gogroupId) {
 		dogroups[gogroupId].emplace_back(std::make_shared<DataObject>());
-		dogroups[DEFAULT_GROUP_ID][dogroups[DEFAULT_GROUP_ID].size() - 1]->scene = this;
-		return dogroups[DEFAULT_GROUP_ID][dogroups[DEFAULT_GROUP_ID].size() - 1];
+		dogroups[default_groupid][dogroups[default_groupid].size() - 1]->scene = this;
+		return dogroups[default_groupid][dogroups[default_groupid].size() - 1];
 	}
 
 	std::shared_ptr<DataObject> Scene::getDObject(const uint64_t & tag, const std::string & dogroupId) {
@@ -208,4 +207,6 @@ namespace msf {
 			dogroups.insert(std::pair<string, dobject_vec>(pair.first, vec));
 		}
 	}
+
+	const std::string Scene::default_groupid = "default";
 }

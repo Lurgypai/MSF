@@ -8,8 +8,6 @@
 #include "GameObject.h"
 #include "DataObject.h"
 
-#define DEFAULT_GROUP_ID "default"
-
 namespace msf {
 
 	class GameObject;
@@ -21,16 +19,18 @@ namespace msf {
 		Scene(Scene& scene_);
 		Scene(Scene&& scene_);
 
+		static const std::string default_groupid;
+
 		//GObject
 		inline const std::vector<std::shared_ptr<GameObject>>& getGOGroup(const std::string& gogroupId) {
 			return gogroups[gogroupId];
 		}
 		void removeGOGroup(const std::string& groupId);
 
-		std::shared_ptr<GameObject> addGObject(const std::string& groupId = DEFAULT_GROUP_ID);
-		std::shared_ptr<GameObject> addGObject(const sf::Vector2f& pos, const std::string& groupId = DEFAULT_GROUP_ID);
+		std::shared_ptr<GameObject> addGObject(const std::string& groupId = default_groupid);
+		std::shared_ptr<GameObject> addGObject(const sf::Vector2f& pos, const std::string& groupId = default_groupid);
 
-		std::shared_ptr<GameObject> getGObject(const uint64_t& tag, const std::string& groupId = DEFAULT_GROUP_ID);
+		std::shared_ptr<GameObject> getGObject(const uint64_t& tag, const std::string& groupId = default_groupid);
 		bool hasGObject(const GameObject& obj_, const std::string& groupId) const;
 
 		const std::vector<std::string>& getGOGroupIds() const;
@@ -43,9 +43,9 @@ namespace msf {
 		}
 		void removeDOGroup(const std::string& groupId);
 
-		std::shared_ptr<DataObject> addDObject(const std::string& groupId = DEFAULT_GROUP_ID);
+		std::shared_ptr<DataObject> addDObject(const std::string& groupId = default_groupid);
 
-		std::shared_ptr<DataObject> getDObject(const uint64_t& tag, const std::string& groupId = DEFAULT_GROUP_ID);
+		std::shared_ptr<DataObject> getDObject(const uint64_t& tag, const std::string& groupId = default_groupid);
 		bool hasDObject(const DataObject& obj_, const std::string& groupId) const;
 
 		const std::vector<std::string>& getDOGroupIds() const;

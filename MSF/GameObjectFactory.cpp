@@ -2,49 +2,18 @@
 #include "GameObjectFactory.h"
 
 namespace msf {
-	GameObjectFactory::GameObjectFactory(Scene * scene_) : scene{ scene_ }, pos{}, componentTag{} {
-	}
+GameObjectFactory::GameObjectFactory(Scene * scene_) : scene{ scene_ }, pos{}, componentTag{} {}
 
-	GameObjectFactory::GameObjectFactory(Scene * scene_, const sf::Vector2f pos_) : scene{ scene_ }, pos{ pos_ }, componentTag{} {
-	}
+GameObjectFactory::GameObjectFactory(Scene * scene_, const sf::Vector2f pos_) : scene{ scene_ }, pos{ pos_ }, componentTag{} {}
 
-std::vector<std::shared_ptr<GameObject>> GameObjectFactory::generate(int num) {
-	std::vector<std::shared_ptr<GameObject>> gobjects;
-	while (num--) {
-		gobjects.push_back(generate());
-	}
-	return gobjects;
-}
+GameObjectFactory::~GameObjectFactory()	{}
 
-std::vector<std::shared_ptr<GameObject>> GameObjectFactory::generate(const std::string & groupId, int num)	{
-
-	std::vector<std::shared_ptr<GameObject>> gobjects;
-	while(num--) {
-		gobjects.push_back(generate(groupId));
-	}
-	return gobjects;
-}
-
-std::shared_ptr<GameObject> GameObjectFactory::generate() {
-	std::shared_ptr<GameObject> gobjectPtr = scene->addGObject(pos);
-	fillComponents(gobjectPtr);
-	gobjectPtr->componentTag = componentTag;
-	return gobjectPtr;
+Scene* GameObjectFactory::getScene() {
+	return scene;
 }
 
 std::shared_ptr<GameObject> GameObjectFactory::generate(const std::string & groupId) {
-	std::shared_ptr<GameObject> gobjectPtr = scene->addGObject(pos, groupId);
-	fillComponents(gobjectPtr);
-	gobjectPtr->componentTag = componentTag;
-	return gobjectPtr;
-}
-
-const Scene & GameObjectFactory::getScene() const {
-	return *scene;
-}
-
-void GameObjectFactory::fillComponents(const std::shared_ptr<GameObject>& gobjectPtr) {
-
+	std::shared_ptr<GameObject> gobjectPtr{ scene->addGObject(pos, groupId) };
 	if (componentTag & GameObject::Physics) {
 		gobjectPtr->physics = physics->clone();
 		gobjectPtr->physics->owner = gobjectPtr.get();
@@ -61,6 +30,13 @@ void GameObjectFactory::fillComponents(const std::shared_ptr<GameObject>& gobjec
 		gobjectPtr->audio = audio->clone();
 		gobjectPtr->audio->owner = gobjectPtr.get();
 	}
+	gobjectPtr->componentTag = componentTag;
+	return gobjectPtr;
 }
 
+void GameObjectFactory::generate(std::vector<std::shared_ptr<GameObject>>& gobjs, int num, const std::string& groupId)	{
+	while(num--) {
+		gobjs.push_back(generate(groupId));
+	}
+}
 }
