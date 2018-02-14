@@ -33,7 +33,7 @@
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v141</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -46,7 +46,7 @@
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v141</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -163,20 +163,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="BoxGraphicsComp.h" />
-    <ClInclude Include="Camera.h" />
+    <ClInclude Include="Action.h" />
     <ClInclude Include="Controller.h" />
-    <ClInclude Include="DataInComponent.h" />
     <ClInclude Include="DataObject.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="Components.h" />
     <ClInclude Include="ActionQueue.h" />
     <ClInclude Include="GameObjectFactory.h" />
-    <ClInclude Include="SimpleController.h" />
-    <ClInclude Include="TestGraphicsComponent.h" />
-    <ClInclude Include="TestInputComponent.h" />
-    <ClInclude Include="TestPhysicsComponent.h" />
+    <ClInclude Include="Camera.h" />
+    <ClInclude Include="MSF.h" />
     <ClInclude Include="Updater.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="MVector.h" />
@@ -185,27 +181,20 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="BoxGraphicsComp.cpp" />
     <ClCompile Include="Camera.cpp" />
-    <ClCompile Include="DataInComponent.cpp" />
     <ClCompile Include="DataObject.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="GameObjectFactory.cpp" />
-    <ClCompile Include="MSF.cpp" />
     <ClCompile Include="MVector.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Settings.cpp" />
-    <ClCompile Include="SimpleController.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="TestGraphicsComponent.cpp" />
-    <ClCompile Include="TestInputComponent.cpp" />
-    <ClCompile Include="TestPhysicsComponent.cpp" />
     <ClCompile Include="Updater.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

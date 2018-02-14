@@ -19,17 +19,11 @@
     <Filter Include="Source Files\Base">
       <UniqueIdentifier>{671f36a1-0b7e-4eec-945d-b3c149d5705f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Basic">
-      <UniqueIdentifier>{c8278222-0213-40db-9ffc-5e8e34764444}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Base\Util">
       <UniqueIdentifier>{b26061c7-4ef0-4d6d-bdee-78c1b3c20af5}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\Base\Util">
       <UniqueIdentifier>{44ff954b-e206-43ec-8283-ea9e219400fd}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Basic">
-      <UniqueIdentifier>{4cba3696-be33-4031-ad29-147393422d2c}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files\Base\Game">
       <UniqueIdentifier>{8abb920e-1097-440f-b181-a7ae048668c7}</UniqueIdentifier>
@@ -63,18 +57,6 @@
     <ClInclude Include="targetver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TestGraphicsComponent.h">
-      <Filter>Header Files\Basic</Filter>
-    </ClInclude>
-    <ClInclude Include="TestPhysicsComponent.h">
-      <Filter>Header Files\Basic</Filter>
-    </ClInclude>
-    <ClInclude Include="TestInputComponent.h">
-      <Filter>Header Files\Basic</Filter>
-    </ClInclude>
-    <ClInclude Include="BoxGraphicsComp.h">
-      <Filter>Header Files\Basic</Filter>
-    </ClInclude>
     <ClInclude Include="GameObject.h">
       <Filter>Header Files\Base\Game\Objects\GameObjects</Filter>
     </ClInclude>
@@ -90,20 +72,11 @@
     <ClInclude Include="Settings.h">
       <Filter>Header Files\Base\Game</Filter>
     </ClInclude>
-    <ClInclude Include="Camera.h">
-      <Filter>Header Files\Base\Game</Filter>
-    </ClInclude>
     <ClInclude Include="Controller.h">
       <Filter>Header Files\Base\Game</Filter>
     </ClInclude>
-    <ClInclude Include="SimpleController.h">
-      <Filter>Header Files\Basic</Filter>
-    </ClInclude>
     <ClInclude Include="DataObject.h">
       <Filter>Header Files\Base\Game\Objects\DataObjects</Filter>
-    </ClInclude>
-    <ClInclude Include="DataInComponent.h">
-      <Filter>Header Files\Basic</Filter>
     </ClInclude>
     <ClInclude Include="Updater.h">
       <Filter>Header Files\Base\Game\Objects</Filter>
@@ -117,25 +90,19 @@
     <ClInclude Include="Components.h">
       <Filter>Header Files\Base\Game\Objects</Filter>
     </ClInclude>
+    <ClInclude Include="Action.h">
+      <Filter>Header Files\Base\Game\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>Header Files\Base\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="MSF.h">
+      <Filter>Header Files\Base</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="MSF.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="TestGraphicsComponent.cpp">
-      <Filter>Source Files\Basic</Filter>
-    </ClCompile>
-    <ClCompile Include="TestPhysicsComponent.cpp">
-      <Filter>Source Files\Basic</Filter>
-    </ClCompile>
-    <ClCompile Include="TestInputComponent.cpp">
-      <Filter>Source Files\Basic</Filter>
-    </ClCompile>
-    <ClCompile Include="BoxGraphicsComp.cpp">
-      <Filter>Source Files\Basic</Filter>
     </ClCompile>
     <ClCompile Include="GameObjectFactory.cpp">
       <Filter>Source Files\Base\Game\Objects\GameObjects</Filter>
@@ -152,12 +119,6 @@
     <ClCompile Include="Settings.cpp">
       <Filter>Source Files\Base\Game</Filter>
     </ClCompile>
-    <ClCompile Include="Camera.cpp">
-      <Filter>Source Files\Base\Game</Filter>
-    </ClCompile>
-    <ClCompile Include="SimpleController.cpp">
-      <Filter>Source Files\Basic</Filter>
-    </ClCompile>
     <ClCompile Include="DataObject.cpp">
       <Filter>Source Files\Base\Game\Objects\DataObjects</Filter>
     </ClCompile>
@@ -167,8 +128,8 @@
     <ClCompile Include="Scene.cpp">
       <Filter>Source Files\Base\Game\Objects</Filter>
     </ClCompile>
-    <ClCompile Include="DataInComponent.cpp">
-      <Filter>Source Files\Basic</Filter>
+    <ClCompile Include="Camera.cpp">
+      <Filter>Source Files\Base\Game</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

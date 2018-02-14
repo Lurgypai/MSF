@@ -49,7 +49,7 @@ public:
 	void move(const sf::Vector2f& moveBy);
 	void setPos(float x, float y);
 	void setPos(const sf::Vector2f& pos_);
-	void updateInput(std::vector<Action>& action);
+	void updateInput();
 	void updateSensuals(sf::RenderWindow& window);
 	
 	template<typename T, typename... Args>

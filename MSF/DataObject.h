@@ -3,11 +3,11 @@
 #include <cstdint>
 
 #include "Components.h"
+#include "ActionQueue.h"
 
 namespace msf {
 
 class Scene;
-struct Action;
 class DInputComponent;
 
 class DataObject
@@ -17,7 +17,7 @@ public:
 	DataObject();
 	~DataObject();
 
-	void update(std::vector<Action>& actions);
+	void update();
 	bool hasInput();
 	Scene* getScene();
 

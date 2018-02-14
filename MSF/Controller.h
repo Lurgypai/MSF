@@ -1,5 +1,6 @@
 #pragma once
-#include "ActionQueue.h"
+#include <memory>
+#include "Action.h"
 
 namespace msf {
 
@@ -9,7 +10,7 @@ public:
 	Controller() {};
 	virtual ~Controller() {};
 	virtual void readInputs() = 0;
-	virtual bool pollInputs(Action& action) = 0;
+	virtual bool pollInputs(std::shared_ptr<msf::Action>& action) = 0;
 };
 
 }

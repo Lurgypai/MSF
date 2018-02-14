@@ -1,11 +1,17 @@
 #include "stdafx.h"
 #include "MVector.h"
-#include <math.h>
 #include <cmath>
 #include <iostream>
 #define PI 3.14159265358979323846
 
 using msf::MVector;
+
+inline double roundF(double toRound) {
+	toRound *= 100000.0;
+	toRound = std::round(toRound);
+	toRound /= 100000.0;
+	return toRound;
+}
 
 MVector::MVector(void) :
 	angle(0.0),
@@ -29,7 +35,7 @@ MVector MVector::operator+(const MVector & vec_) const
 	double xComp{ (cos(angle * (PI / 180)) * magn) + (cos(vec_.angle * (PI / 180)) * vec_.magn) };
 	double yComp{ (sin(angle * (PI / 180)) * magn) + (sin(vec_.angle * (PI / 180)) * vec_.magn) };
 
-	return MVector{(atan2(yComp, xComp) * (180 / PI)), sqrt((xComp * xComp) + (yComp * yComp))};
+	return MVector{ atan2(yComp, xComp) * (180 / PI), sqrt((xComp * xComp) + (yComp * yComp)) };
 }
 
 MVector MVector::operator-(const MVector & vec_) const
@@ -42,12 +48,12 @@ MVector MVector::operator-(const MVector & vec_) const
 
 MVector MVector::operator+(double d) const
 {
-	return MVector{angle, magn + d};
+	return MVector{ angle, magn + d };
 }
 
 MVector MVector::operator-(double d) const
 {
-	return MVector{ angle, magn - d};
+	return MVector{ angle, magn - d };
 }
 
 MVector MVector::operator*(double d) const
@@ -70,8 +76,7 @@ void MVector::operator+=(const MVector & vec_) {
 void MVector::operator-=(const MVector & vec_) {
 	double xComp{ (cos(angle * (PI / 180)) * magn) - (cos(vec_.angle * (PI / 180)) * vec_.magn) };
 	double yComp{ (sin(angle * (PI / 180)) * magn) - (sin(vec_.angle * (PI / 180)) * vec_.magn) };
-
-	angle = (atan2(yComp, xComp) * (180 / PI));
+	angle = atan2(yComp, xComp) * (180 / PI);
 	magn = sqrt((xComp * xComp) + (yComp * yComp));
 }
 
@@ -103,11 +108,25 @@ bool MVector::operator!=(const MVector & vec_) const
 }
 
 double MVector::xComp() const {
-	return (cos(angle * (PI / 180)) * magn);
+	return roundF(cos(angle * (PI / 180)) * magn);
 }
 
 double MVector::yComp() const {
-	return (sin(angle * (PI / 180)) * magn);
+	return roundF(sin(angle * (PI / 180)) * magn);
+}
+
+void msf::MVector::xComp(double d) {
+	float yComp = roundF(sin(angle * (PI / 180)) * magn);
+	float xComp = d;
+	angle = atan2(yComp, xComp) * (180 / PI);
+	magn = sqrt((xComp * xComp) + (yComp * yComp));
+}
+
+void msf::MVector::yComp(double d) {
+	float xComp = roundF(cos(angle * (PI / 180)) * magn);
+	float yComp = d;
+	angle = atan2(yComp, xComp) * (180 / PI);
+	magn = sqrt((xComp * xComp) + (yComp * yComp));
 }
 
 sf::Vector2f msf::operator+(const sf::Vector2f & vec_, const MVector & mvec_)

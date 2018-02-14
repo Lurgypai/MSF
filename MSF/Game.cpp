@@ -4,45 +4,86 @@
 
 namespace msf {
 
-	Game::Game(const std::string & name_) : name{ name_ }, scenes{}, window{}, physicsSpeed { DEFAULT_PHYSICS_SPEED }, renderSpeed{ DEFAULT_RENDER_SPEED }, updater{} {}
+	Game::Game(const std::string & name_, float physicsSpeed_, float renderSpeed_) : name{ name_ }, scenes{}, window{}, updater{}, physicsSpeed{ physicsSpeed_ }, renderSpeed{ renderSpeed_ }, cameras{}, windowWidth{ DEFAULT_WINDOW_WIDTH }, windowHeight{ DEFAULT_WINDOW_HEIGHT }, windowStyle{sf::Style::Default} {}
 
-	Game::Game(const std::string& name_, std::initializer_list<std::pair<const std::string, Scene&>> scenes_) : name{ name_ }, window{}, physicsSpeed{ DEFAULT_PHYSICS_SPEED }, renderSpeed{ DEFAULT_RENDER_SPEED }, updater{} {
-		for (auto& pair_ : scenes_) {
-			scenes.insert({ pair_.first, &(pair_.second) });
-		}
-	}
+	Game::Game(const std::string & name_, const std::unordered_map<std::string, Scene*>& scenes_, float physicsSpeed_, float renderSpeed_) : name{ name_ }, window{}, physicsSpeed{ physicsSpeed_ }, renderSpeed{ renderSpeed_ }, updater{}, scenes{ scenes_ }, cameras{}, windowWidth{ DEFAULT_WINDOW_WIDTH }, windowHeight{ DEFAULT_WINDOW_HEIGHT }, windowStyle{ sf::Style::Default } {}
 
-Game::Game(const std::string & name_, std::initializer_list<std::pair<const std::string, Scene&>> scenes_, const Settings& settings_) : name{ name_ }, settings{settings_}, window{}, physicsSpeed{ DEFAULT_PHYSICS_SPEED }, renderSpeed{ DEFAULT_RENDER_SPEED }, updater{} {
-	for (auto& pair_ : scenes_) {
-		scenes.insert({ pair_.first, &(pair_.second) });
+	Game::Game(const std::string & name_, const std::unordered_map<std::string, Scene*>& scenes_, const Settings & settings_, float physicsSpeed_, float renderSpeed_) : name{ name_ }, settings{ settings_ }, window{}, physicsSpeed{ physicsSpeed_ }, renderSpeed{ renderSpeed_ }, updater{}, cameras{}, windowWidth{ DEFAULT_WINDOW_WIDTH }, windowHeight{ DEFAULT_WINDOW_HEIGHT }, windowStyle{ sf::Style::Default } {}
+
+Game::~Game() {
+	stopLoop();
+}
+
+void Game::prepareWindow(int width, int height, sf::Uint32 style) {
+	windowWidth = width;
+	windowHeight = height;
+	windowStyle = style;
+}
+
+void Game::openWindow() {
+	if (window.isOpen())
+		window.close();
+
+	window.create({ windowWidth, windowHeight }, name, windowStyle);
+	window.setActive(false);
+
+	if (cameras.size() == 0) {
+		Camera cam{ window.getView() };
+		addCamera(0, cam);
+		setCamera(0);
 	}
 }
 
-Game::Game(const std::string & name_, float physicsSpeed_, float updateSpeed) : name{ name_ }, scenes{}, window{}, updater{} {
+void Game::startLoop() {
+	gameLoop = std::thread(&Game::threadLoop, this);
 }
 
-Game::Game(const std::string & name_, std::initializer_list<std::pair<const std::string, Scene&>> scenes_, float physicsSpeed_, float renderSpeed_) : name{ name_ }, window{}, physicsSpeed{ physicsSpeed_ }, renderSpeed{renderSpeed_}, updater{} {
-	for (auto& pair_ : scenes_) {
-		scenes.insert({ pair_.first, &(pair_.second) });
-	}
-}
-
-Game::Game(const std::string & name_, std::initializer_list<std::pair<const std::string, Scene&>> scenes_, const Settings & settings_, float physicsSpeed_, float renderSpeed_) : name{ name_ }, settings{ settings_ }, window{}, physicsSpeed{ physicsSpeed_ }, renderSpeed{ renderSpeed_ }, updater{} {
-	for (auto& pair_ : scenes_) {
-		scenes.insert({ pair_.first, &(pair_.second) });
-	}
-}
-
-Game::Game(const std::string & name_, const Settings & settings_) : name{ name_ }, scenes{}, settings { settings_ }, window{} {}
-
-Game::~Game() {}
-
-void Game::start(const std::string& startScene) {
+void Game::start(const std::string& startScene, const std::string& startGroup) {
 	currentScene = scenes[startScene];
-	updater.registerScene(*currentScene);
-	openWindow();
-	gameLoop = std::thread(&Game::startLoop, this);
-	//begin the gameloop
+	updater.registerScene(currentScene);
+	updater.addCurrentGroup(startGroup);
+	startLoop();
+}
+
+void Game::stopLoop() {
+	isLooping = false;
+	gameLoop.join();
+}
+
+void Game::setCamera(int id) {
+	currentCamera = cameras[id];
+}
+
+void Game::setSettings(const Settings & set_) {
+	settings = set_;
+}
+
+void Game::setSettings(const std::initializer_list<std::pair<std::string, int>> set_) {
+	for (auto pair : set_) {
+		settings.setField(pair.first, pair.second);
+	}
+}
+
+void Game::addCamera(int id, const Camera& view) {
+	cameras[id] = std::make_shared<Camera>(view);
+}
+
+void Game::setScene(const std::string & id) {
+	currentScene = scenes[id];
+	updater.registerScene(currentScene);
+
+}
+
+void Game::addScene(Scene & scene_, const std::string& id) {
+	scenes.insert({ id, &scene_ });
+}
+
+bool Game::getLooping() const {
+	return isLooping.load();
+}
+
+const std::string & Game::getName() const {
+	return name;
 }
 
 Scene* Game::getScene(const std::string& id) {
@@ -64,109 +105,47 @@ sf::RenderWindow* Game::getWindow() {
 Updater * Game::getUpdater() {
 	return &updater;
 }
-
-void Game::setSettings(const Settings & set_) {
-	settings = set_;
-}
-
-void Game::setSettings(const std::initializer_list<std::pair<std::string, int>> set_) {
-	for (auto pair : set_) {
-		settings.setField(pair.first, pair.second);
-	}
-}
-
-
-void Game::addScene(Scene & scene_, const std::string& id) {
-	scenes.insert({id, &scene_});
-}
-
-void Game::setScene(const std::string & id) {
-	currentScene = scenes[id];
-	updater.registerScene(*currentScene);
-
-}
-
-
-std::shared_ptr<Camera> Game::getCamera(const std::string & id) {
+std::shared_ptr<Camera> Game::getCamera(int id) {
 	return cameras[id];
 }
 
-void Game::setCamera(const std::string & id) {
-	currentCamera = cameras[id];
-}
 
-void Game::openWindow() {
-	if (window.isOpen())
-		window.close();
-	sf::ContextSettings contSettings{};
-	contSettings.antialiasingLevel = 0;
 
-	window.create(sf::VideoMode(settings.getField("width"), settings.getField("height")), name, sf::Style::Default, contSettings);
-	window.setActive(false);
-}
+void Game::threadLoop() {
+	openWindow();
 
-//currently doesn't deal with the camera, waiting till theres something too look at.
-void Game::startLoop() {
 	isLooping = true;
-
-	double inputCalls{};
-	double sensualsCalls{};
-	sf::Clock timer;
 	sf::Clock clock;
 	float inputsTime{};
 	float sensualsTime{};
 	while (isLooping.load()) {
+		currentCamera->update();
+		window.setView(currentCamera->getView());
 		float delta = clock.restart().asSeconds();
 		inputsTime += delta;
 		sensualsTime += delta;
-		if (inputsTime >= 1.0/physicsSpeed) {
-			std::vector<Action> actions;
-			
-			for (auto& controller : controllers) {
-				controller->readInputs();
-				for (Action action{ "", true }; controller->pollInputs(action);) {
-					actions.push_back(action);
-					action = Action{ "", true };
-				}
-			}
-			
-			updater.updateInputs(actions);
-			inputCalls++;
+		if (inputsTime >= 1.0 / physicsSpeed) {
+			updater.updateInputs();
 		}
-		if (sensualsTime >= 1.0/renderSpeed) {
+		if (sensualsTime >= 1.0 / renderSpeed) {
 			window.setActive(true);
-			//window.setView(*currentCamera);
 			window.clear(sf::Color::Black);
 			updater.updateSensuals(window);
-			sensualsCalls++;
 			window.display();
 			window.setActive(false);
-
-			sf::Event event;
-			while (window.pollEvent(event)) {
-				if (event.type == sf::Event::Closed) {
-					window.close();
-					isLooping = false;
-				}
-			}
-		}
-		if (timer.getElapsedTime().asSeconds() >= 1) {
-			std::cout << inputCalls / 1.0 << std::endl;
-			std::cout << sensualsCalls / 1.0 << std::endl;
-			inputCalls = 0;
-			sensualsCalls = 0;
-			timer.restart();
 		}
 		if (inputsTime >= 1 / physicsSpeed)
 			inputsTime = 0;
 		if (sensualsTime >= 1 / renderSpeed)
 			sensualsTime = 0;
+
+		sf::Event event;
+		while (window.pollEvent(event)) {
+			if (event.type == sf::Event::Closed) {
+				window.close();
+				isLooping = false;
+			}
+		}
 	}
 }
-
-void Game::stopLoop() {
-	isLooping = false;
-	gameLoop.join();
-}
-
 }

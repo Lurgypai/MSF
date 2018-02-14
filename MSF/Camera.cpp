@@ -2,33 +2,16 @@
 #include "Camera.h"
 
 namespace msf {
-
-	Camera::Camera() : View{}, universalShaders {} {}
-
-	Camera::Camera(const sf::FloatRect & rectangle) : View{ rectangle }, universalShaders{} {}
-
-	Camera::Camera(const sf::Vector2f & center, const sf::Vector2f & size) : View{ center, size }, universalShaders{} {}
-
-Camera::~Camera()
-{
-}
-
-void Camera::removeShader(const std::string & id) {
-	if (universalShaders.find(id) != universalShaders.end()) {
-		universalShaders.erase(universalShaders.find(id));
+	Camera::Camera(const sf::View & view) : view{view} {
 	}
-}
-
-std::vector<std::shared_ptr<sf::Shader>> Camera::getUniversalShaders() {
-	std::vector<std::shared_ptr<sf::Shader>> shaders;
-	for (const auto& pair : universalShaders) {
-		shaders.push_back(pair.second);
+	Camera::Camera(const Camera & other) : view{other.view} {
 	}
-	return shaders;
-}
-
-std::shared_ptr<sf::Shader> Camera::getShader(const std::string & id) {
-	return universalShaders[id];
-}
-
+	Camera::~Camera() {}
+	void Camera::update() {}
+	const sf::View & Camera::getView() {
+		return view;
+	}
+	void Camera::setView(const sf::View & view_) {
+		view = view_;
+	}
 }

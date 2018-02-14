@@ -1,37 +1,47 @@
 #pragma once
 #include <vector>
-#include <string>
+#include <memory>
+
+#include "Action.h"
 /*
 holds actions so that they can be retrieved by what needs them
 retrieve action function takes an action, fills it, returns boolean
 passAct to give actions
 */
 namespace msf {
-	
-struct Action {
-	std::string id;
-	bool isNothing;
-};
 
 class ActionQueue {
 public:
-	inline bool pollAction(Action& act) {
-		if (actions.size() != 0) {
-			act = actions[actions.size() - 1];
-			actions.pop_back();
-			return true;
-		}
-		return false;
+	~ActionQueue() {
+		clearActions();
+	}
+
+	inline std::vector<Action*>& getBuffer() {
+		return buffer;
 	}
 
 	inline bool isEmpty() {
-		return actions.empty();
+		return buffer.empty();
 	}
 
-	inline void storeAction(const Action action) {
-		actions.push_back(action);
+	inline void storeAction(Action*& action) {
+		buffer.push_back(action);
+	}
+
+	inline void deleteAction() {
+		delete buffer[buffer.size() - 1];
+		buffer.pop_back();
+	}
+
+	inline void clearActions() {
+		for (auto iter = buffer.begin(); iter != buffer.end();) {
+			delete *iter;
+			iter = buffer.erase(iter);
+			if (iter != buffer.end())
+				iter++;
+		}
 	}
 private:
-	std::vector<Action> actions;
+	std::vector<Action*> buffer;
 };
 }

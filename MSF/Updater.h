@@ -26,16 +26,20 @@ namespace msf {
 	class Updater {
 	public:
 		Updater();
-		Updater(Scene& scene);
-		Updater(Scene&& scene) = delete;
+		Updater(Scene*& scene);
 
-		inline void updateInputs(std::vector<Action>& actions) {
+		void registerScene(Scene*& scene_);
+		void setCurrentGroups(std::vector<std::string> ids);
+		void addCurrentGroup(const std::string id);
+		void removeCurrentGroup(const std::string id);
+
+		inline void updateInputs() {
 			for (const auto& tag : currentGroups) {
 				for (auto& dobject : currentScene->getDOGroup(tag)) {
-					dobject->update(actions);
+					dobject->update();
 				}
 				for (auto& gobject : currentScene->getGOGroup(tag)) {
-					gobject->updateInput(actions);
+					gobject->updateInput();
 				}
 			}
 		}
@@ -48,14 +52,7 @@ namespace msf {
 			}
 		}
 
-		void registerScene(Scene& scene_);
-		void registerScene(Scene&& scene_) = delete;
-
-		void setCurrentGroups(std::initializer_list<std::string> ids);
-		void setCurrentGroups(std::vector<std::string> ids);
-		void addCurrentGroup(const std::string id);
-		void removeCurrentGroup(const std::string id);
-		std::vector<std::string> getCurrentGroups()  const;
+		const std::vector<std::string>& getCurrentGroups()  const;
 
 	protected:
 		Scene* currentScene;

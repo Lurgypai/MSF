@@ -4,20 +4,13 @@
 
 namespace msf {
 
-	Updater::Updater() : currentScene{ nullptr } {}
+	Updater::Updater() : currentScene{ nullptr }, currentGroups{} {}
 
-	Updater::Updater(Scene& scene) : currentScene{ &scene } {}
+	Updater::Updater(Scene*& scene) : currentScene{ scene }, currentGroups{currentGroups} {}
 
-	void Updater::registerScene(Scene & scene_) {
+	void Updater::registerScene(Scene*& scene_) {
 		currentGroups.clear();
-		currentScene = &scene_;
-	}
-
-	void Updater::setCurrentGroups(std::initializer_list<std::string> ids) {
-		currentGroups.clear();
-		for (auto& id : ids) {
-			currentGroups.push_back(id);
-		}
+		currentScene = scene_;
 	}
 
 	void Updater::setCurrentGroups(std::vector<std::string> ids) {
@@ -38,7 +31,7 @@ namespace msf {
 		}
 	}
 
-	std::vector<std::string> Updater::getCurrentGroups() const {
+	const std::vector<std::string>& Updater::getCurrentGroups() const {
 		return currentGroups;
 	}
 }

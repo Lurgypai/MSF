@@ -64,52 +64,38 @@ namespace msf {
 		pos = pos_;
 	}
 
-	void GameObject::updateInput(std::vector<Action>& action) {
-		std::vector<Action> actions{};
+	void GameObject::updateInput() {
 		if (componentTag & Input) {
-			input->update(action);
-			Action act{ "", true };
-			while (input->pollAction(act)) {
+			input->update();
+			for (auto& act : input->getBuffer()) {
 				queue.storeAction(act);
-				actions.push_back(act);
 			}
 		}
 
 		if (componentTag & Physics) {
-			if (!actions.empty()) {
-				for (auto& action : actions) {
-					physics->update(action);
-				}
-			}
-			else {
-				physics->update(Action{"", true});
-			}
-			Action act{ "", true };
-			while (physics->pollAction(act))
+			physics->update(input->getBuffer());
+			for (auto& act : physics->getBuffer()) {
 				queue.storeAction(act);
+			}
+			if(!physics->getBuffer().empty())
+			physics->getBuffer().clear();
+		}
+
+		if (componentTag & Input) {
+			if (!input->getBuffer().empty())
+				input->getBuffer().clear();
 		}
 	}
 
 	void GameObject::updateSensuals(sf::RenderWindow& window) {
-		Action act{ "", true };
-		if (!queue.isEmpty()) {
-			while (queue.pollAction(act)) {
-				if (componentTag & Audio) {
-					audio->update(act);
-				}
-				if (componentTag & Graphics) {
-					graphics->update(act, window);
-				}
-			}
-			return;
+		if (componentTag & Audio) {
+			audio->update(queue.getBuffer());
 		}
-		else {
-			if (componentTag & Audio) {
-				audio->update(act);
-			}
-			if (componentTag & Graphics) {
-				graphics->update(act, window);
-			}
+		if (componentTag & Graphics) {
+			graphics->update(queue.getBuffer(), window);
+		}
+		if (!queue.isEmpty()) {
+			queue.clearActions();
 		}
 	}
 

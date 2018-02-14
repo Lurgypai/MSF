@@ -13,38 +13,41 @@ namespace msf {
 		Component() : owner{ nullptr } {}
 		GameObject* owner;
 	};
-	//physics
-	class PhysicsComponent : public Component {
+	class InputsComponents : public Component {
 	public:
-		virtual void update(const Action& act) = 0;
+		std::vector<Action*> buffer;
+		std::vector<Action*>& getBuffer() { return buffer; }
+	};
+	//physics
+	class PhysicsComponent : public InputsComponents {
+	public:
+		virtual void update(std::vector<Action*>& act) = 0;
 		virtual std::unique_ptr<PhysicsComponent> clone() = 0;
-		virtual bool pollAction(Action& act) = 0;
 	};
 	//gfx
 	class GraphicsComponent : public Component {
 	public:
-		virtual void update(const Action& act, sf::RenderWindow& window) = 0;
+		virtual void update(std::vector<Action*>& act, sf::RenderWindow& window) = 0;
 		virtual std::unique_ptr<GraphicsComponent> clone() = 0;
 	};
 	//input
-	class InputComponent : public Component {
+	class InputComponent : public InputsComponents {
 	public:
-		virtual void update(std::vector<Action>& action) = 0;
+		virtual void update() = 0;
 		virtual std::unique_ptr<InputComponent> clone() = 0;
-		virtual bool pollAction(Action& act) = 0;
 	};
 
 	//audio
 	class AudioComponent : public Component {
 	public:
-		virtual void update(const Action& act) = 0;
+		virtual void update(std::vector<Action*>& act) = 0;
 		virtual std::unique_ptr<AudioComponent> clone() = 0;
 	};
 
 	class DInputComponent {
 	public:
 		DInputComponent() : owner{ nullptr } {}
-		virtual void update(std::vector<Action>& action) = 0;
+		virtual void update() = 0;
 		virtual std::unique_ptr<DInputComponent> clone() = 0;
 		DataObject* owner;
 	};

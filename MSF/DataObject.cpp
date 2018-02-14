@@ -7,8 +7,8 @@ DataObject::DataObject() : input{ nullptr }, tag(tagCounter++) {}
 
 DataObject::~DataObject() {}
 
-void DataObject::update(std::vector<Action>& actions) {
-	input->update(actions);
+void DataObject::update() {
+	input->update();
 }
 
 bool DataObject::hasInput() {
