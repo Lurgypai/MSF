@@ -129,7 +129,7 @@
       <Filter>Source Files\Base\Game\Objects</Filter>
     </ClCompile>
     <ClCompile Include="Camera.cpp">
-      <Filter>Source Files\Base\Game</Filter>
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

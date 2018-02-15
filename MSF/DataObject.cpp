@@ -3,16 +3,16 @@
 
 namespace msf {
 
-DataObject::DataObject() : input{ nullptr }, tag(tagCounter++) {}
+DataObject::DataObject() : logic{ nullptr }, tag(tagCounter++) {}
 
 DataObject::~DataObject() {}
 
 void DataObject::update() {
-	input->update();
+	logic->update();
 }
 
 bool DataObject::hasInput() {
-	return (input.get() != nullptr);
+	return (logic.get() != nullptr);
 }
 
 Scene * DataObject::getScene() {

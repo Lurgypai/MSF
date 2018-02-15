@@ -8,7 +8,7 @@
 namespace msf {
 
 class Scene;
-class DInputComponent;
+class DLogicComponent;
 
 class DataObject
 {
@@ -22,9 +22,9 @@ public:
 	Scene* getScene();
 
 	template<typename T, typename... Args>
-	void setInput(Args... args) {
-		input = std::make_unique<T>(args...);
-		input->owner = this;
+	void setLogic(Args... args) {
+		logic = std::make_unique<T>(args...);
+		logic->owner = this;
 	}
 
 	bool operator==(const DataObject& other);
@@ -32,7 +32,7 @@ public:
 private:
 	friend class Scene;
 
-	std::unique_ptr<DInputComponent> input;
+	std::unique_ptr<DLogicComponent> logic;
 	Scene* scene;
 	uint64_t tag;
 	static uint64_t tagCounter;

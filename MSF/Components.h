@@ -13,28 +13,19 @@ namespace msf {
 		Component() : owner{ nullptr } {}
 		GameObject* owner;
 	};
-	class InputsComponents : public Component {
+	class LogicComponent : public Component {
 	public:
-		std::vector<Action*> buffer;
+		virtual void update() = 0;
+		virtual std::unique_ptr<LogicComponent> clone() = 0;
 		std::vector<Action*>& getBuffer() { return buffer; }
-	};
-	//physics
-	class PhysicsComponent : public InputsComponents {
-	public:
-		virtual void update(std::vector<Action*>& act) = 0;
-		virtual std::unique_ptr<PhysicsComponent> clone() = 0;
+	protected:
+		std::vector<Action*> buffer;
 	};
 	//gfx
 	class GraphicsComponent : public Component {
 	public:
 		virtual void update(std::vector<Action*>& act, sf::RenderWindow& window) = 0;
 		virtual std::unique_ptr<GraphicsComponent> clone() = 0;
-	};
-	//input
-	class InputComponent : public InputsComponents {
-	public:
-		virtual void update() = 0;
-		virtual std::unique_ptr<InputComponent> clone() = 0;
 	};
 
 	//audio
@@ -44,11 +35,12 @@ namespace msf {
 		virtual std::unique_ptr<AudioComponent> clone() = 0;
 	};
 
-	class DInputComponent {
+	class DLogicComponent {
 	public:
-		DInputComponent() : owner{ nullptr } {}
+		DLogicComponent() : owner{ nullptr } {}
 		virtual void update() = 0;
-		virtual std::unique_ptr<DInputComponent> clone() = 0;
+		virtual std::unique_ptr<DLogicComponent> clone() = 0;
+	protected:
 		DataObject* owner;
 	};
 }

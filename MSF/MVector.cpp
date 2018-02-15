@@ -35,7 +35,7 @@ MVector MVector::operator+(const MVector & vec_) const
 	double xComp{ (cos(angle * (PI / 180)) * magn) + (cos(vec_.angle * (PI / 180)) * vec_.magn) };
 	double yComp{ (sin(angle * (PI / 180)) * magn) + (sin(vec_.angle * (PI / 180)) * vec_.magn) };
 
-	return MVector{ atan2(yComp, xComp) * (180 / PI), sqrt((xComp * xComp) + (yComp * yComp)) };
+	return MVector{atan2(yComp, xComp) * (180 / PI), sqrt((xComp * xComp) + (yComp * yComp))};
 }
 
 MVector MVector::operator-(const MVector & vec_) const
@@ -48,12 +48,12 @@ MVector MVector::operator-(const MVector & vec_) const
 
 MVector MVector::operator+(double d) const
 {
-	return MVector{ angle, magn + d };
+	return MVector{angle, magn + d};
 }
 
 MVector MVector::operator-(double d) const
 {
-	return MVector{ angle, magn - d };
+	return MVector{ angle, magn - d};
 }
 
 MVector MVector::operator*(double d) const

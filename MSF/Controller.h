@@ -4,13 +4,20 @@
 
 namespace msf {
 
-class Controller
-{
-public:
-	Controller() {};
-	virtual ~Controller() {};
-	virtual void readInputs() = 0;
-	virtual bool pollInputs(std::shared_ptr<msf::Action>& action) = 0;
-};
+	class Controller
+	{
+	public:
+		Controller() {};
+		virtual ~Controller() {};
+		virtual void readInputs() = 0;
+		std::vector<Action>& getBuffer() {
+			return buffer;
+		}
+		void clearBuffer() {
+			buffer.clear();
+		}
+	protected:
+		std::vector<Action> buffer;
+	};
 
 }

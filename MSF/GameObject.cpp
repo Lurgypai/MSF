@@ -9,14 +9,11 @@ namespace msf {
 	GameObject::GameObject(float x, float y) : pos{ x, y }, componentTag{}, tag{ tagCounter++ }, queue{}, scene{ nullptr } {}
 
 	GameObject::GameObject(const GameObject & gobj) : pos{ gobj.pos }, componentTag{ gobj.componentTag }, tag{ tagCounter++ }, queue{}, scene{ nullptr } {
-		if (componentTag & Physics) {
-			physics = gobj.physics->clone();
+		if (componentTag & Logic) {
+			logic = gobj.logic->clone();
 		}
 		if (componentTag & Graphics) {
 			graphics = gobj.graphics->clone();
-		}
-		if (componentTag & Input) {
-			input = gobj.input->clone();
 		}
 		if (componentTag & Audio) {
 			audio = gobj.audio->clone();
@@ -65,25 +62,13 @@ namespace msf {
 	}
 
 	void GameObject::updateInput() {
-		if (componentTag & Input) {
-			input->update();
-			for (auto& act : input->getBuffer()) {
+		if (componentTag & Logic) {
+			logic->update();
+			for (auto& act : logic->getBuffer()) {
 				queue.storeAction(act);
 			}
-		}
-
-		if (componentTag & Physics) {
-			physics->update(input->getBuffer());
-			for (auto& act : physics->getBuffer()) {
-				queue.storeAction(act);
-			}
-			if(!physics->getBuffer().empty())
-			physics->getBuffer().clear();
-		}
-
-		if (componentTag & Input) {
-			if (!input->getBuffer().empty())
-				input->getBuffer().clear();
+			if (!logic->getBuffer().empty())
+				logic->getBuffer().clear();
 		}
 	}
 
@@ -112,14 +97,11 @@ namespace msf {
 		pos = gobj.pos;
 		componentTag = gobj.componentTag;
 
-		if (componentTag & Physics) {
-			physics = gobj.physics->clone();
+		if (componentTag & Logic) {
+			logic = gobj.logic->clone();
 		}
 		if (componentTag & Graphics) {
 			graphics = gobj.graphics->clone();
-		}
-		if (componentTag & Input) {
-			input = gobj.input->clone();
 		}
 		if (componentTag & Audio) {
 			audio = gobj.audio->clone();

@@ -14,17 +14,13 @@ Scene* GameObjectFactory::getScene() {
 
 std::shared_ptr<GameObject> GameObjectFactory::generate(const std::string & groupId) {
 	std::shared_ptr<GameObject> gobjectPtr{ scene->addGObject(pos, groupId) };
-	if (componentTag & GameObject::Physics) {
-		gobjectPtr->physics = physics->clone();
-		gobjectPtr->physics->owner = gobjectPtr.get();
+	if (componentTag & GameObject::Logic) {
+		gobjectPtr->logic = logic->clone();
+		gobjectPtr->logic->owner = gobjectPtr.get();
 	}
 	if (componentTag & GameObject::Graphics) {
 		gobjectPtr->graphics = graphics->clone();
 		gobjectPtr->graphics->owner = gobjectPtr.get();
-	}
-	if (componentTag & GameObject::Input) {
-		gobjectPtr->input = input->clone();
-		gobjectPtr->input->owner = gobjectPtr.get();
 	}
 	if (componentTag & GameObject::Audio) {
 		gobjectPtr->audio = audio->clone();

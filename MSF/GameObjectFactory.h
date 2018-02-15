@@ -20,9 +20,9 @@ public:
 	void generate(std::vector<std::shared_ptr<GameObject>>& objs, int num, const std::string& groupid = Scene::default_groupid);
 
 	template<typename T, typename... Args>
-	GameObjectFactory* setPhysics(Args... args) {
-		physics = std::make_unique<T>(args...);
-		componentTag |= GameObject::Physics;
+	GameObjectFactory* setLogic(Args... args) {
+		logic = std::make_unique<T>(args...);
+		componentTag |= GameObject::Logic;
 		return this;
 	}
 
@@ -30,13 +30,6 @@ public:
 	GameObjectFactory* setGraphics(Args... args) {
 		graphics = std::make_unique<T>(args...);
 		componentTag |= GameObject::Graphics;
-		return this;
-	}
-
-	template<typename T, typename... Args>
-	GameObjectFactory* setInput(Args... args) {
-		input = std::make_unique<T>(args...);
-		componentTag |= GameObject::Input;
 		return this;
 	}
 
@@ -51,9 +44,8 @@ private:
 
 	Scene* scene;
 	sf::Vector2f pos;
-	std::unique_ptr<PhysicsComponent> physics;
+	std::unique_ptr<LogicComponent> logic;
 	std::unique_ptr<GraphicsComponent> graphics;
-	std::unique_ptr<InputComponent> input;
 	std::unique_ptr<AudioComponent> audio;
 	unsigned char componentTag;
 };
