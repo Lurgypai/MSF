@@ -12,3 +12,5 @@
 #include "Settings.h"
 #include "MVector.h"
 #include "Camera.h"
+#include "Collider.h"
+#include "Shape.h"

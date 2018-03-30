@@ -3,6 +3,7 @@
 #include "GameObject.h"
 #include <memory>
 #include <iostream>
+//getter for components
 namespace msf {
 	GameObject::GameObject(const sf::Vector2f pos_) : pos{ pos_ }, componentTag{}, tag{ tagCounter++ }, queue{}, scene{nullptr} {}
 
@@ -28,6 +29,13 @@ namespace msf {
 	
 	float GameObject::y() const {
 		return pos.y;
+	}
+
+	LogicComponent* GameObject::getLogic() {
+		if (componentTag & Logic) {
+			return logic.get();
+		}
+		return nullptr;
 	}
 
 	uint64_t GameObject::getTag() const {

@@ -2,6 +2,7 @@
 #include "GameObject.h"
 #include "DataObject.h"
 #include "ActionQueue.h"
+#include "Collider.h"
 #include "SFML\Graphics.hpp"
 
 namespace msf {
@@ -11,15 +12,34 @@ namespace msf {
 	class Component {
 	public:
 		Component() : owner{ nullptr } {}
+		virtual ~Component() {};
 		GameObject* owner;
 	};
 	class LogicComponent : public Component {
 	public:
+		LogicComponent() : collide{ nullptr }, colliderFlag{false} {}
+		virtual ~LogicComponent() {};
 		virtual void update() = 0;
 		virtual std::unique_ptr<LogicComponent> clone() = 0;
+
+		Collider* getCollider() { return collide.get(); }
+		bool hasCollider() {
+			return colliderFlag;
+		}
+
 		std::vector<Action*>& getBuffer() { return buffer; }
+
+		template<typename T, typename... Args>
+		void setCollider(Args... args) {
+			collide = std::make_unique<T>(args...);
+			colliderFlag = true;
+		}
+		//getter
 	protected:
 		std::vector<Action*> buffer;
+		bool colliderFlag;
+		std::unique_ptr<Collider> collide;
+
 	};
 	//gfx
 	class GraphicsComponent : public Component {
@@ -38,9 +58,9 @@ namespace msf {
 	class DLogicComponent {
 	public:
 		DLogicComponent() : owner{ nullptr } {}
+		virtual ~DLogicComponent() {}
 		virtual void update() = 0;
 		virtual std::unique_ptr<DLogicComponent> clone() = 0;
-	protected:
 		DataObject* owner;
 	};
 }

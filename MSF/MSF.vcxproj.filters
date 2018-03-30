@@ -49,6 +49,12 @@
     <Filter Include="Header Files\Base\Game\Objects\DataObjects">
       <UniqueIdentifier>{52de9784-327d-41ff-b884-fed5cf3d2ebf}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Base\Game\Objects\Collider">
+      <UniqueIdentifier>{17fd9f4a-6fc9-4d88-a53b-f3f4ac950212}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Base\Game\Objects\Collider">
+      <UniqueIdentifier>{5cf7399b-bf16-4de7-96de-5c705d42b899}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -96,8 +102,14 @@
     <ClInclude Include="Camera.h">
       <Filter>Header Files\Base\Game</Filter>
     </ClInclude>
+    <ClInclude Include="Collider.h">
+      <Filter>Header Files\Base\Game\Objects\Collider</Filter>
+    </ClInclude>
+    <ClInclude Include="Shape.h">
+      <Filter>Header Files\Base\Game\Objects\Collider</Filter>
+    </ClInclude>
     <ClInclude Include="MSF.h">
-      <Filter>Header Files\Base</Filter>
+      <Filter>Header Files\Base\Game</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -130,6 +142,12 @@
     </ClCompile>
     <ClCompile Include="Camera.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Collider.cpp">
+      <Filter>Source Files\Base\Game\Objects\Collider</Filter>
+    </ClCompile>
+    <ClCompile Include="Shape.cpp">
+      <Filter>Source Files\Base\Game\Objects\Collider</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

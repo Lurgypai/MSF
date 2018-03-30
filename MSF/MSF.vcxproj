@@ -164,6 +164,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Action.h" />
+    <ClInclude Include="Collider.h" />
     <ClInclude Include="Controller.h" />
     <ClInclude Include="DataObject.h" />
     <ClInclude Include="Game.h" />
@@ -173,6 +174,7 @@
     <ClInclude Include="GameObjectFactory.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="MSF.h" />
+    <ClInclude Include="Shape.h" />
     <ClInclude Include="Updater.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="MVector.h" />
@@ -182,6 +184,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="Collider.cpp" />
     <ClCompile Include="DataObject.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameObject.cpp" />
@@ -189,6 +192,7 @@
     <ClCompile Include="MVector.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Settings.cpp" />
+    <ClCompile Include="Shape.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
