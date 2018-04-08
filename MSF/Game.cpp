@@ -35,6 +35,8 @@ void Game::openWindow() {
 }
 
 void Game::startLoop() {
+	//isLooping set here so we can check it after immediately after starting the game
+	isLooping = true;
 	gameLoop = std::thread(&Game::threadLoop, this);
 }
 
@@ -42,6 +44,15 @@ void Game::start(const std::string& startScene, const std::string& startGroup) {
 	currentScene = scenes[startScene];
 	updater.registerScene(currentScene);
 	updater.addCurrentGroup(startGroup);
+	startLoop();
+}
+
+void Game::start(const std::string & startScene, const std::initializer_list<std::string>& startGroup) {
+	currentScene = scenes[startScene];
+	updater.registerScene(currentScene);
+	for (auto& group : startGroup) {
+		updater.addCurrentGroup(group);
+	}
 	startLoop();
 }
 
@@ -76,6 +87,21 @@ void Game::setScene(const std::string & id) {
 
 void Game::addScene(Scene & scene_, const std::string& id) {
 	scenes.insert({ id, &scene_ });
+}
+
+void Game::unPause() {
+	std::unique_lock<std::mutex> lck{ pauseMx };
+	isPaused = false;
+	pauseCv.notify_one();
+}
+
+void Game::waitFor() {
+	gameLoop.join();
+}
+
+void Game::pause() {
+	std::unique_lock<std::mutex> lck{ pauseMx };
+	isPaused = true;
 }
 
 bool Game::getLooping() const {
@@ -113,12 +139,15 @@ std::shared_ptr<Camera> Game::getCamera(int id) {
 
 void Game::threadLoop() {
 	openWindow();
-
-	isLooping = true;
 	sf::Clock clock;
 	float inputsTime{};
 	float sensualsTime{};
 	while (isLooping.load()) {
+
+		//check if we're paused
+		std::unique_lock<std::mutex> lck{ pauseMx };
+		pauseCv.wait(lck, [this] {return !this->isPaused; });
+
 		currentCamera->update();
 		window.setView(currentCamera->getView());
 		float delta = clock.restart().asSeconds();

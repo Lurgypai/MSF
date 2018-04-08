@@ -11,6 +11,10 @@ namespace msf {
 		origin.y = y;
 	}
 
+	void Shape::setOrigin(const sf::Vector2f & pos) {
+		origin = pos;
+	}
+
 	const sf::Vector2f& Shape::getOrigin() const {
 		return origin;
 	}

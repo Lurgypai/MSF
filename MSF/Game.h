@@ -10,6 +10,8 @@
 #include "Controller.h"
 #include "Camera.h"
 #include <chrono>
+#include <thread>
+#include <condition_variable>
 #include <SFML/Graphics.hpp>
 #define DEFAULT_RENDER_SPEED 60.0
 #define DEFAULT_PHYSICS_SPEED 120.0
@@ -27,15 +29,19 @@ public:
 
 	void prepareWindow(int width = DEFAULT_WINDOW_WIDTH, int height = DEFAULT_WINDOW_HEIGHT, sf::Uint32 style = sf::Style::Default);
 	void openWindow();
-	void threadLoop();
 	void stopLoop();
+	void startLoop();
 	void start(const std::string& startScene, const std::string& startGroup);
+	void start(const std::string& startScene, const std::initializer_list<std::string>& startGroup);
 	void setCamera(int id);
 	void setSettings(const Settings& set_);
 	void setSettings(const std::initializer_list<std::pair<std::string, int>>);
 	void addCamera(int id, const Camera& cam);
 	void setScene(const std::string& id);
 	void addScene(Scene& scene_, const std::string& id);
+	void pause();
+	void unPause();
+	void waitFor();
 
 	bool getLooping() const;
 	const std::string& getName() const;
@@ -63,7 +69,12 @@ private:
 	std::unordered_map<std::string, Scene*> scenes;
 	std::unordered_map<int, std::shared_ptr<Camera>> cameras;
 
-	void startLoop();
+	void threadLoop();
+
+	//pausing
+	bool isPaused;
+	std::mutex pauseMx;
+	std::condition_variable pauseCv;
 };
 
 }

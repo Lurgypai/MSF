@@ -15,6 +15,8 @@ namespace msf {
 			shape = std::make_unique<T>(args...);
 		}
 
+		void setOrigin(float x, float y);
+		void setOrigin(const sf::Vector2f& pos);
 		Shape* getShape();
 
 		virtual bool intersects(Collider& other) = 0;

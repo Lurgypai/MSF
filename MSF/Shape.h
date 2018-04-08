@@ -14,6 +14,7 @@ namespace msf {
 		virtual std::unique_ptr<Shape> clone() = 0;
 
 		void setOrigin(float x, float y);
+		void setOrigin(const sf::Vector2f& pos);
 		const sf::Vector2f& getOrigin() const;
 		int getType();
 	protected:
