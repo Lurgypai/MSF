@@ -36,7 +36,6 @@ public:
 	void setCamera(int id);
 	void setSettings(const Settings& set_);
 	void setSettings(const std::initializer_list<std::pair<std::string, int>>);
-	void addCamera(int id, const Camera& cam);
 	void setScene(const std::string& id);
 	void addScene(Scene& scene_, const std::string& id);
 	void pause();
@@ -51,6 +50,11 @@ public:
 	sf::RenderWindow* getWindow();
 	Updater* getUpdater();
 	std::shared_ptr<Camera> getCamera(int id);
+
+	template<typename T, typename... Args>
+	void addCamera(int id, Args... args) {
+		cameras[id] = std::make_shared<T>(args...);
+	}
 
 private:
 	float physicsSpeed;

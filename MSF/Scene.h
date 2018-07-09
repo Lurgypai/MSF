@@ -29,6 +29,7 @@ namespace msf {
 
 		std::shared_ptr<GameObject> addGObject(const std::string& groupId = default_groupid);
 		std::shared_ptr<GameObject> addGObject(const sf::Vector2f& pos, const std::string& groupId = default_groupid);
+		void removeGObject(const uint64_t& tag, const std::string& groupId);
 
 		std::shared_ptr<GameObject> getGObject(const uint64_t& tag, const std::string& groupId = default_groupid);
 		bool hasGObject(const GameObject& obj_, const std::string& groupId) const;

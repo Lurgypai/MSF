@@ -3,7 +3,7 @@
 
 namespace msf {
 
-DataObject::DataObject() : logic{ nullptr }, tag(tagCounter++) {}
+	DataObject::DataObject() : logic{ nullptr }, tag(tagCounter++), scene{nullptr} {}
 
 DataObject::~DataObject() {}
 

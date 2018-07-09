@@ -140,14 +140,14 @@
     <ClCompile Include="Scene.cpp">
       <Filter>Source Files\Base\Game\Objects</Filter>
     </ClCompile>
-    <ClCompile Include="Camera.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Collider.cpp">
       <Filter>Source Files\Base\Game\Objects\Collider</Filter>
     </ClCompile>
     <ClCompile Include="Shape.cpp">
       <Filter>Source Files\Base\Game\Objects\Collider</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>Source Files\Base\Game</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

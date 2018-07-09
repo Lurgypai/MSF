@@ -91,6 +91,15 @@ namespace msf {
 		return gogroups[gogroupId][gogroups[gogroupId].size() - 1];
 	}
 
+	void Scene::removeGObject(const uint64_t & tag, const std::string& groupId) {
+		for (auto& i = gogroups[groupId].begin(); i != gogroups[groupId].end(); i++) {
+			if ((*i)->getTag() == tag) {
+				gogroups[groupId].erase(i);
+				return;
+			}
+		}
+	}
+
 	std::shared_ptr<GameObject> Scene::getGObject(const uint64_t & tag, const std::string & gogroupId) {
 		for (const auto& gobject : gogroups[gogroupId]) {
 			if (gobject->getTag() == tag) {
@@ -132,10 +141,10 @@ namespace msf {
 		}
 	}
 
-	std::shared_ptr<DataObject> Scene::addDObject(const string & gogroupId) {
-		dogroups[gogroupId].emplace_back(std::make_shared<DataObject>());
-		dogroups[default_groupid][dogroups[default_groupid].size() - 1]->scene = this;
-		return dogroups[default_groupid][dogroups[default_groupid].size() - 1];
+	std::shared_ptr<DataObject> Scene::addDObject(const string & dogroupid) {
+		dogroups[dogroupid].emplace_back(std::make_shared<DataObject>());
+		dogroups[dogroupid][dogroups[dogroupid].size() - 1]->scene = this;
+		return dogroups[dogroupid][dogroups[dogroupid].size() - 1];
 	}
 
 	std::shared_ptr<DataObject> Scene::getDObject(const uint64_t & tag, const std::string & dogroupId) {

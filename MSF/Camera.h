@@ -8,9 +8,9 @@ namespace msf {
 		Camera(const Camera& other);
 		virtual ~Camera();
 		virtual void update();
-		const sf::View& getView();
+		const sf::View& getView() const;
 		void setView(const sf::View& view_);
-	private:
+	protected:
 		sf::View view;
 	};
 }

@@ -8,7 +8,7 @@ namespace msf {
 	}
 	Camera::~Camera() {}
 	void Camera::update() {}
-	const sf::View & Camera::getView() {
+	const sf::View & Camera::getView() const {
 		return view;
 	}
 	void Camera::setView(const sf::View & view_) {

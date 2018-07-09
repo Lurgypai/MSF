@@ -28,8 +28,7 @@ void Game::openWindow() {
 	window.setActive(false);
 
 	if (cameras.size() == 0) {
-		Camera cam{ window.getView() };
-		addCamera(0, cam);
+		addCamera<Camera>(0, window.getView());
 		setCamera(0);
 	}
 }
@@ -58,6 +57,7 @@ void Game::start(const std::string & startScene, const std::initializer_list<std
 
 void Game::stopLoop() {
 	isLooping = false;
+	if(gameLoop.joinable())
 	gameLoop.join();
 }
 
@@ -73,10 +73,6 @@ void Game::setSettings(const std::initializer_list<std::pair<std::string, int>> 
 	for (auto pair : set_) {
 		settings.setField(pair.first, pair.second);
 	}
-}
-
-void Game::addCamera(int id, const Camera& view) {
-	cameras[id] = std::make_shared<Camera>(view);
 }
 
 void Game::setScene(const std::string & id) {
@@ -96,6 +92,7 @@ void Game::unPause() {
 }
 
 void Game::waitFor() {
+	if(gameLoop.joinable())
 	gameLoop.join();
 }
 
@@ -142,14 +139,12 @@ void Game::threadLoop() {
 	sf::Clock clock;
 	float inputsTime{};
 	float sensualsTime{};
-	while (isLooping.load()) {
+	while (isLooping) {
 
 		//check if we're paused
 		std::unique_lock<std::mutex> lck{ pauseMx };
 		pauseCv.wait(lck, [this] {return !this->isPaused; });
 
-		currentCamera->update();
-		window.setView(currentCamera->getView());
 		float delta = clock.restart().asSeconds();
 		inputsTime += delta;
 		sensualsTime += delta;
@@ -157,15 +152,18 @@ void Game::threadLoop() {
 			updater.updateInputs();
 		}
 		if (sensualsTime >= 1.0 / renderSpeed) {
+			currentCamera->update();
+			window.setView(currentCamera->getView());
+
 			window.setActive(true);
 			window.clear(sf::Color::Black);
 			updater.updateSensuals(window);
 			window.display();
 			window.setActive(false);
 		}
-		if (inputsTime >= 1 / physicsSpeed)
+		if (inputsTime >= 1.0 / physicsSpeed)
 			inputsTime = 0;
-		if (sensualsTime >= 1 / renderSpeed)
+		if (sensualsTime >= 1.0 / renderSpeed)
 			sensualsTime = 0;
 
 		sf::Event event;
@@ -176,5 +174,6 @@ void Game::threadLoop() {
 			}
 		}
 	}
+	return;
 }
 }
