@@ -3,6 +3,7 @@
 #include <unordered_map>
 #include <string>
 #include "Scene.h"
+#include "Camera.h"
 //Updater updates its children
 //read from action queue
 /*
@@ -33,6 +34,9 @@ namespace msf {
 		void addCurrentGroup(const std::string id);
 		void removeCurrentGroup(const std::string id);
 
+		//the reason it restarts a loop if it detects a size change is to protect from invalidation due to a size change, don't want to miss anything when updating, and
+		//objects can delete as many of eachother as they want.
+		//a better solution would be that deleting marks an object for deletion, and then it is removed in a final pass after updating. But I'm lazy for now.
 		inline void updateInputs() {
 			for (const auto& tag : currentGroups) {
 				for (auto& dobject : currentScene->getDOGroup(tag)) {
@@ -42,10 +46,26 @@ namespace msf {
 					gobject->updateInput();
 				}
 			}
+
+			//deleteion pass
+			for (const auto& tag : currentGroups) {
+				for (int i = 0; i != currentScene->getGOGroup(tag).size(); i++) {
+					if (currentScene->getGOGroup(tag)[i]->destroyed()) {
+						currentScene->removeGObject(currentScene->getGOGroup(tag)[i]->getTag(), tag);
+						i--;
+					}
+				}
+			}
 		}
 
-		inline void updateSensuals(sf::RenderWindow& window) {
+		inline void updateSensuals(std::unordered_map<int, std::shared_ptr<Camera>> cams, std::shared_ptr<Camera> currentCam, sf::RenderWindow& window) {
 			for (auto& tag : currentGroups) {
+				if (currentScene->hasSpecialCam(tag)) {
+					window.setView(cams[currentScene->getSpecialCam(tag)]->getView());
+				}
+				else {
+					window.setView(currentCam->getView());
+				}
 				for (auto& gobject : currentScene->getGOGroup(tag)) {
 					gobject->updateSensuals(window);
 				}

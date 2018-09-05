@@ -18,7 +18,9 @@ public:
 	~DataObject();
 
 	void update();
+	void destroy();
 	bool hasInput();
+	bool destroyed();
 	Scene* getScene();
 
 	template<typename T, typename... Args>
@@ -36,6 +38,7 @@ private:
 	Scene* scene;
 	uint64_t tag;
 	static uint64_t tagCounter;
+	bool deleted;
 };
 
 }

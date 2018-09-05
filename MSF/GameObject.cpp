@@ -5,11 +5,23 @@
 #include <iostream>
 //getter for components
 namespace msf {
-	GameObject::GameObject(const sf::Vector2f pos_) : pos{ pos_ }, componentTag{}, tag{ tagCounter++ }, queue{}, scene{nullptr} {}
+	GameObject::GameObject(const sf::Vector2f pos_) : pos{ pos_ }, componentTag{}, tag{ tagCounter++ }, queue{}, scene{ nullptr }, deleted{false} {}
 
-	GameObject::GameObject(float x, float y) : pos{ x, y }, componentTag{}, tag{ tagCounter++ }, queue{}, scene{ nullptr } {}
+	GameObject::GameObject(float x, float y) : pos{ x, y }, componentTag{}, tag{ tagCounter++ }, queue{}, scene{ nullptr }, deleted{ false } {}
 
-	GameObject::GameObject(const GameObject & gobj) : pos{ gobj.pos }, componentTag{ gobj.componentTag }, tag{ tagCounter++ }, queue{}, scene{ nullptr } {
+	GameObject::GameObject(const GameObject & gobj) : pos{ gobj.pos }, componentTag{ gobj.componentTag }, tag{ tagCounter++ }, queue{}, scene{ gobj.scene }, deleted{ false } {
+		if (componentTag & Logic) {
+			logic = gobj.logic->clone();
+		}
+		if (componentTag & Graphics) {
+			graphics = gobj.graphics->clone();
+		}
+		if (componentTag & Audio) {
+			audio = gobj.audio->clone();
+		}
+	}
+
+	GameObject::GameObject(GameObject && gobj) : pos{ gobj.pos }, componentTag{ gobj.componentTag }, tag{ tagCounter++ }, queue{}, scene{ gobj.scene }, deleted{ false } {
 		if (componentTag & Logic) {
 			logic = gobj.logic->clone();
 		}
@@ -92,6 +104,14 @@ namespace msf {
 		}
 	}
 
+	void GameObject::destroy() {
+		deleted = true;
+	}
+
+	bool GameObject::destroyed() {
+		return deleted;
+	}
+
 	//incomplete
 	bool GameObject::operator==(const GameObject & obj2_) const {
 		return (tag == tag);
@@ -102,6 +122,23 @@ namespace msf {
 	}
 
 	void GameObject::operator=(const GameObject & gobj) {
+		scene = gobj.scene;
+		pos = gobj.pos;
+		componentTag = gobj.componentTag;
+
+		if (componentTag & Logic) {
+			logic = gobj.logic->clone();
+		}
+		if (componentTag & Graphics) {
+			graphics = gobj.graphics->clone();
+		}
+		if (componentTag & Audio) {
+			audio = gobj.audio->clone();
+		}
+	}
+
+	void GameObject::operator=(GameObject && gobj) {
+		scene = gobj.scene;
 		pos = gobj.pos;
 		componentTag = gobj.componentTag;
 

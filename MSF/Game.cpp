@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "Game.h"
+#include "Camera.h"
 #include <iostream>
 
 namespace msf {
@@ -14,10 +15,11 @@ Game::~Game() {
 	stopLoop();
 }
 
-void Game::prepareWindow(int width, int height, sf::Uint32 style) {
+void Game::prepareWindow(int width, int height, sf::Uint32 style, bool vsync_) {
 	windowWidth = width;
 	windowHeight = height;
 	windowStyle = style;
+	vsync = vsync_;
 }
 
 void Game::openWindow() {
@@ -26,11 +28,17 @@ void Game::openWindow() {
 
 	window.create({ windowWidth, windowHeight }, name, windowStyle);
 	window.setActive(false);
+	window.setVerticalSyncEnabled(vsync);
 
 	if (cameras.size() == 0) {
 		addCamera<Camera>(0, window.getView());
 		setCamera(0);
 	}
+	else {
+		setCamera(0);
+	}
+
+	window.setView(currentCamera->getView());
 }
 
 void Game::startLoop() {
@@ -82,13 +90,17 @@ void Game::setScene(const std::string & id) {
 }
 
 void Game::addScene(Scene & scene_, const std::string& id) {
-	scenes.insert({ id, &scene_ });
+	auto pair = scenes.insert({ id, &scene_ });
+	if (!pair.second) {
+		scenes[id] = &scene_;
+	}
 }
 
 void Game::unPause() {
-	std::unique_lock<std::mutex> lck{ pauseMx };
-	isPaused = false;
-	pauseCv.notify_one();
+	if (isPaused) {
+		isPaused = false;
+		windowMx.unlock();
+	}
 }
 
 void Game::waitFor() {
@@ -96,9 +108,30 @@ void Game::waitFor() {
 	gameLoop.join();
 }
 
+void Game::closeLoop() {
+	isLooping = false;
+}
+
 void Game::pause() {
-	std::unique_lock<std::mutex> lck{ pauseMx };
-	isPaused = true;
+	if (!isPaused) {
+		isPaused = true;
+		windowMx.lock();
+	}
+}
+
+bool Game::pollWindowEvent(sf::Event & e) {
+	eventAccessMx.lock();
+	if (windowEvents.empty()) {
+		eventAccessMx.unlock();
+		return false;
+	}
+
+	else {
+			e = windowEvents.back();
+			windowEvents.pop_back();
+			eventAccessMx.unlock();
+			return true;
+	}
 }
 
 bool Game::getLooping() const {
@@ -142,35 +175,49 @@ void Game::threadLoop() {
 	while (isLooping) {
 
 		//check if we're paused
-		std::unique_lock<std::mutex> lck{ pauseMx };
-		pauseCv.wait(lck, [this] {return !this->isPaused; });
+		if (!isPaused) {
+			float delta = clock.restart().asSeconds();
+			inputsTime += delta;
+			sensualsTime += delta;
+			if (inputsTime >= 1.0 / physicsSpeed) {
+				updater.updateInputs();
+			}
+			if (sensualsTime >= 1.0 / renderSpeed) {
+				currentCamera->update();
+				//update special cameras
+				for (auto& tag : updater.getCurrentGroups()) {
+					if (currentScene->hasSpecialCam(tag)) {
+						cameras[currentScene->getSpecialCam(tag)]->update();
 
-		float delta = clock.restart().asSeconds();
-		inputsTime += delta;
-		sensualsTime += delta;
-		if (inputsTime >= 1.0 / physicsSpeed) {
-			updater.updateInputs();
+					}
+				}
+				//protect window
+				std::unique_lock<std::mutex> lck{ windowMx };
+				window.setView(currentCamera->getView());
+				window.setActive(true);
+				window.clear(sf::Color::Black);
+				updater.updateSensuals(cameras, currentCamera, window);
+				window.display();
+				window.setActive(false);
+				//free mutex
+			}
+			if (inputsTime >= 1.0 / physicsSpeed)
+				inputsTime = 0;
+			if (sensualsTime >= 1.0 / renderSpeed)
+				sensualsTime = 0;
 		}
-		if (sensualsTime >= 1.0 / renderSpeed) {
-			currentCamera->update();
-			window.setView(currentCamera->getView());
 
-			window.setActive(true);
-			window.clear(sf::Color::Black);
-			updater.updateSensuals(window);
-			window.display();
-			window.setActive(false);
-		}
-		if (inputsTime >= 1.0 / physicsSpeed)
-			inputsTime = 0;
-		if (sensualsTime >= 1.0 / renderSpeed)
-			sensualsTime = 0;
-
+		//we don't need to pause the thread, because we still need to read events
 		sf::Event event;
 		while (window.pollEvent(event)) {
 			if (event.type == sf::Event::Closed) {
 				window.close();
 				isLooping = false;
+			}
+			else {
+				eventAccessMx.lock();
+				windowEvents.push_back(event);
+				eventAccessMx.unlock();
 			}
 		}
 	}

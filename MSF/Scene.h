@@ -16,7 +16,7 @@ namespace msf {
 	class Scene {
 	public:
 		Scene(void);
-		Scene(Scene& scene_);
+		Scene(const Scene& scene_);
 		Scene(Scene&& scene_);
 
 		static const std::string default_groupid;
@@ -53,6 +53,11 @@ namespace msf {
 		void addDOGroup(const std::string groupId);
 		bool hasDOGroup(const std::string& groupId_) const;
 
+		void addSpecialCamera(const std::string& groupId, int camNum);
+		void removeSpecialCamera(const std::string& groupId);
+		int getSpecialCam(const std::string& groupId);
+		bool hasSpecialCam(const std::string& groupId);
+
 		void operator=(const Scene& scene_);
 		void operator=(Scene&& scene_);
 	private:
@@ -64,6 +69,8 @@ namespace msf {
 		std::vector<std::string> dogroupIds;
 
 		sf::RenderWindow* window;
+	
+		std::unordered_map<std::string, int> specialCameras;
 	};
 
 }

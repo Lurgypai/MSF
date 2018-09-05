@@ -23,11 +23,11 @@ namespace msf {
 
 		dogroupIds(1, default_groupid),
 		dogroups{ { default_groupid, dobject_vec{} } }
-	{}
+	{	}
 
-	Scene::Scene(Scene & scene_) :
+	Scene::Scene(const Scene & scene_) :
 		gogroupIds(scene_.gogroupIds), gogroups{}, dogroupIds{ scene_.dogroupIds }, dogroups{} {
-
+		gogroups.clear();
 		for (auto& pair : scene_.gogroups) {
 			gobject_vec vec{};
 			for (auto& gobject : pair.second) {
@@ -36,6 +36,7 @@ namespace msf {
 			gogroups.insert(std::pair<string, gobject_vec>(pair.first, vec));
 		}
 
+		dogroups.clear();
 		for (auto& pair : scene_.dogroups) {
 			dobject_vec vec{};
 			for (auto& dobject : pair.second) {
@@ -176,8 +177,26 @@ namespace msf {
 		return std::find(dogroupIds.begin(), dogroupIds.end(), dogroupId_) != dogroupIds.end();
 	}
 
+	void Scene::addSpecialCamera(const std::string & groupId, int camNum) {
+		specialCameras.insert({ groupId, camNum });
+	}
+
+	void Scene::removeSpecialCamera(const std::string & groupId) {
+		specialCameras.erase(groupId);
+	}
+
+	int Scene::getSpecialCam(const std::string & groupId) {
+		return specialCameras[groupId];
+	}
+
+	bool Scene::hasSpecialCam(const std::string & groupId) {
+		return specialCameras.find(groupId) != specialCameras.end();
+	}
+
+
 	void Scene::operator=(const Scene & scene_) {
 		gogroupIds = scene_.gogroupIds;
+		gogroups = gobject_vec_map{};
 		for (auto& pair : scene_.gogroups) {
 			gobject_vec vec{};
 			for (auto& gobject : pair.second) {
@@ -185,8 +204,8 @@ namespace msf {
 			}
 			gogroups.insert(std::pair<string, gobject_vec>(pair.first, vec));
 		}
-
 		dogroupIds = scene_.dogroupIds;
+		dogroups = dobject_vec_map{};
 		for (auto& pair : scene_.dogroups) {
 			dobject_vec vec{};
 			for (auto& dobject : pair.second) {
@@ -198,6 +217,7 @@ namespace msf {
 
 	void Scene::operator=(Scene && scene_) {
 		gogroupIds = scene_.gogroupIds;
+		gogroups = gobject_vec_map{};
 		for (auto& pair : scene_.gogroups) {
 			gobject_vec vec{};
 			for (auto& gobject : pair.second) {
@@ -208,6 +228,7 @@ namespace msf {
 
 
 		dogroupIds = scene_.dogroupIds;
+		dogroups = dobject_vec_map{};
 		for (auto& pair : scene_.dogroups) {
 			dobject_vec vec{};
 			for (auto& dobject : pair.second) {

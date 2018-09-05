@@ -33,6 +33,7 @@ public:
 	GameObject(const sf::Vector2f pos_);
 	GameObject(float x, float y);
 	GameObject(const GameObject& gobj);
+	GameObject(GameObject&& gobj);
 
 	~GameObject();
 
@@ -50,7 +51,9 @@ public:
 	void setPos(const sf::Vector2f& pos_);
 	void updateInput();
 	void updateSensuals(sf::RenderWindow& window);
-	
+	void destroy();
+	bool destroyed();
+
 	template<typename T, typename... Args>
 	void setLogic(Args... args) {
 		logic = std::make_unique<T>(args...);
@@ -73,10 +76,12 @@ public:
 	bool operator==(const GameObject& obj2_) const;
 	bool operator!=(const GameObject& obj2_) const;
 	void operator=(const GameObject& gobj);
+	void operator=(GameObject &&gobj);
 private:
 	friend class Scene;
 	friend class GameObjectFactory;
 
+	bool deleted;
 	uint64_t tag;
 	unsigned char componentTag;
 	sf::Vector2f pos;

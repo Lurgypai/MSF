@@ -27,7 +27,7 @@ public:
 	Game(const std::string& name_, const std::unordered_map<std::string, Scene*>& scenes, const Settings& settings_, float physicsSpeed_ = DEFAULT_PHYSICS_SPEED, float updateSpeed = DEFAULT_RENDER_SPEED);
 	~Game();
 
-	void prepareWindow(int width = DEFAULT_WINDOW_WIDTH, int height = DEFAULT_WINDOW_HEIGHT, sf::Uint32 style = sf::Style::Default);
+	void prepareWindow(int width = DEFAULT_WINDOW_WIDTH, int height = DEFAULT_WINDOW_HEIGHT, sf::Uint32 style = sf::Style::Default, bool vsync = true);
 	void openWindow();
 	void stopLoop();
 	void startLoop();
@@ -41,7 +41,9 @@ public:
 	void pause();
 	void unPause();
 	void waitFor();
+	void closeLoop();
 
+	bool pollWindowEvent(sf::Event& e);
 	bool getLooping() const;
 	const std::string& getName() const;
 	Scene* getScene(const std::string& id);
@@ -59,6 +61,7 @@ public:
 private:
 	float physicsSpeed;
 	float renderSpeed;
+	bool vsync;
 	const std::string name;
 	unsigned int windowWidth;
 	unsigned int windowHeight;
@@ -73,12 +76,14 @@ private:
 	std::unordered_map<std::string, Scene*> scenes;
 	std::unordered_map<int, std::shared_ptr<Camera>> cameras;
 
+	std::mutex eventAccessMx;
+	std::mutex windowMx;
+	std::vector<sf::Event> windowEvents;
+
 	void threadLoop();
 
 	//pausing
-	bool isPaused;
-	std::mutex pauseMx;
-	std::condition_variable pauseCv;
+	std::atomic_bool isPaused;
 };
 
 }
